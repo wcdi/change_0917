@@ -28,7 +28,8 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release #source /etc/os-release
   case "$ID" in
     ubuntu)
-      ubuntu
+      ubuntu;;
     openwrt)
-      openwrt
+      openwrt;;
+  esac
 fi
