@@ -16,6 +16,10 @@ ubuntu(){
   sudo apt-get update
 }
 
+kali(){
+
+}
+
 openwrt(){
   source_file="/etc/opkg/distfeeds.conf"
   sudo cp $source_file $source_file.bk
@@ -31,5 +35,7 @@ if [ -f /etc/os-release ]; then
       ubuntu;;
     openwrt)
       openwrt;;
+    kali)
+      kali;;
   esac
 fi
