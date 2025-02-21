@@ -20,7 +20,7 @@ kali(){
   APT="/etc/apt"
   source_file=""
   if [ -f $APT/sources.list.d/kali.sources ]; then
-    source_file="${APT}/sources.list.d/ubuntu.sources"
+    source_file="${APT}/sources.list.d/kali.sources"
     sudo cp $source_file ${APT}/kali.sources.bk
   else
     source_file="${APT}/sources.list"
