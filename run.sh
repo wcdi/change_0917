@@ -8,7 +8,7 @@ ubuntu(){
   if [ -f $APT/sources.list.d/ubuntu.sources ]; then
     source_file="${APT}/sources.list.d/ubuntu.sources"
     sudo cp $source_file ${APT}/ubuntu.sources.bk
-  elif
+  else
     source_file="${APT}/sources.list"
     sudo cp $source_file $source_file.bk
   fi
