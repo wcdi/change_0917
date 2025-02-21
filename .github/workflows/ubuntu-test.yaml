@@ -12,9 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Install depends 
-      run: apt-get update && apt-get install -y sudo
     - name: change url
       run: sh run.sh
     - name: run update
-      run: apt-get update
+      run: sudo apt-get update
