@@ -17,7 +17,17 @@ ubuntu(){
 }
 
 kali(){
-
+  APT="/etc/apt"
+  source_file=""
+  if [ -f $APT/sources.list.d/kali.sources ]; then
+    source_file="${APT}/sources.list.d/ubuntu.sources"
+    sudo cp $source_file ${APT}/kali.sources.bk
+  else
+    source_file="${APT}/sources.list"
+    sudo cp $source_file $source_file.bk
+  fi
+  sudo sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
+  sudo apt-get update
 }
 
 openwrt(){
