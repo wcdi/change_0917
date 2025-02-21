@@ -12,7 +12,7 @@ ubuntu(){
     source_file="${APT}/sources.list"
     sudo cp $source_file $source_file.bk
   fi
-  sudo sed -i 's-ht.*//.*/-http://mirror.hashy0917.net/-' $source_file
+  sudo sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
   sudo apt-get update
 }
 
