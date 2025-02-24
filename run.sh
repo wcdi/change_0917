@@ -30,6 +30,16 @@ kali(){
   sudo apt-get update
 }
 
+debian(){
+  APT="/etc/apt"
+  source_file="${APT}/sources.list"
+  if [ -f $source_file ]; then
+    sudo cp $source_file $source_file.bk
+    sudo sed -i 's-ht.*//.*/-http://mirror.hashy0917.net/debian/-' $source_file
+    sudo apt-get update
+  fi
+}
+
 openwrt(){
   source_file="/etc/opkg/distfeeds.conf"
   sudo cp $source_file $source_file.bk
@@ -42,10 +52,16 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release #source /etc/os-release
   case "$ID" in
     ubuntu)
-      ubuntu;;
+      ubuntu
+      ;;
+    debian)
+      debian
+      ;;
     openwrt)
-      openwrt;;
+      openwrt
+      ;;
     kali)
-      kali;;
+      kali
+      ;;
   esac
 fi
