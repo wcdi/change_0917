@@ -8,7 +8,7 @@ arch(){
     echo 'Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' > $source
     cat $source.bk >> $source
   fi
-  pacman -Syyu
+  # pacman -Syyu
 }
 
 debian(){

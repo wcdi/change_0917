@@ -13,6 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: change url
-      run: sh run.sh
+      run: sudo sh run.sh
     - name: run update
       run: sudo apt-get update
