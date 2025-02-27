@@ -1,6 +1,16 @@
 #!/bin/sh
 set -eu
 
+arch(){
+  source="/etc/pacman.d/mirrorlist"
+  if [ -f $source ]; then
+    cp $source ${source}.bk
+    echo 'Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' > $source
+    cat $source.bk >> $source
+  fi
+  pacman -Syyu
+}
+
 ubuntu(){
   APT="/etc/apt"
   source_file=""
@@ -51,6 +61,9 @@ openwrt(){
 if [ -f /etc/os-release ]; then
   . /etc/os-release #source /etc/os-release
   case "$ID" in
+    arch)
+      arch
+      ;;
     ubuntu)
       ubuntu
       ;;
