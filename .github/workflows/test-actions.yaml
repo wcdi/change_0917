@@ -12,5 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: kali linux
+    - name: arch
+      run: docker build -f ./tests/arch/dockerfile .
+    - name: debian_bookworm 
+      run: docker build -f ./tests/debian_bookworm/dockerfile .
+    - name: debian_bullseye 
+      run: docker build -f ./tests/debian_bullseye/dockerfile .
+    - name: kali
       run: docker build -f ./tests/kali/dockerfile .
