@@ -48,10 +48,17 @@ kali(){
 }
 
 openwrt(){
-  source_file="/etc/opkg/distfeeds.conf"
-   cp $source_file $source_file.bk
-   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
-   opkg update
+  if [ -d /etc/apk ]; then
+    source_file="/etc/apk/repositories.d/distfeeds.list"
+    cp $source_file $source_file.bk
+    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
+    apk update
+  else
+    source_file="/etc/opkg/distfeeds.conf"
+    cp $source_file $source_file.bk
+    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
+    opkg update
+  fi
 }
 
 ubuntu(){
