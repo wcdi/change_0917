@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+almalinux(){
+
+}
+
 arch(){
   source="/etc/pacman.d/mirrorlist"
   if [ -f $source ]; then
@@ -80,6 +84,9 @@ ubuntu(){
 if [ -f /etc/os-release ]; then
   . /etc/os-release #source /etc/os-release
   case "$ID" in
+    almalinux)
+      almalinux
+      ;;
     arch)
       arch
       ;;
