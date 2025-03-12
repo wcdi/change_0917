@@ -1,0 +1,10 @@
+FROM almalinux:9.5
+
+COPY run.sh /
+
+# 依存関係のDL
+# RUN apt-get update && apt-get install -y sudo
+
+# 実行
+RUN sh /run.sh
+RUN dnf update -y
