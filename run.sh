@@ -61,6 +61,17 @@ openwrt(){
   fi
 }
 
+parrot(){
+  APT="/etc/apt"
+  source_file="${APT}/sources.list.d/parrot.list"
+  # バックアップ作成
+  cp $source_file ${APT}/parrot.list.bk
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
+  # directがついているものだけは元に戻す
+  sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $source_file
+  apt-get update
+}
+
 ubuntu(){
   APT="/etc/apt"
   source_file=""
@@ -84,7 +95,14 @@ if [ -f /etc/os-release ]; then
       arch
       ;;
     debian)
-      debian
+      case "$NAME" in
+        "Parrot Security")
+          parrot
+          ;;
+        *)
+          debian
+          ;;
+      esac
       ;;
     kali)
       kali
@@ -94,6 +112,9 @@ if [ -f /etc/os-release ]; then
       ;;
     ubuntu)
       ubuntu
+      ;;
+    *)
+      echo "https://mirror.hashy0917.net/"
       ;;
   esac
 fi
