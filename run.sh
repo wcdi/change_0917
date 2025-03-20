@@ -72,6 +72,15 @@ parrot(){
   apt-get update
 }
 
+raspi(){
+  APT="/etc/apt"
+  if [ -f $APT/sources.list.d/raspi.list ]; then
+    source_file="${APT}/sources.list.d/raspi.list"
+    cp $source_file ${APT}/raspi.list.bk
+    sed -i 's-http://archive.raspberrypi.com/debian/-http://mirror.hashy0917.net/raspbian/raspbian/-' $source_file
+  fi
+}
+
 ubuntu(){
   APT="/etc/apt"
   source_file=""
@@ -100,6 +109,10 @@ if [ -f /etc/os-release ]; then
           parrot
           ;;
         *)
+          # rpi-issueが存在するときはraspi
+          if [ -f /etc/rpi-issue ]; then
+            raspi
+          fi
           debian
           ;;
       esac
