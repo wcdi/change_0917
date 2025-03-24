@@ -16,6 +16,3 @@ wget -O - https://wcdi.adw39.org/change_0917/run.sh | sh
 - httpsを使う方が無難です。
 - 念の為、パッケージリスト更新時(`apt update`等)にurlが正しく設定されているか確認してください。
 - **作者は当スクリプトを使って起きたトラブルによる責任は負いません。**
-
-## どんな感じ？
-[![asciicast](https://asciinema.org/a/TzKCR8LY7ZHg60Wcd724pKs9a.svg)](https://asciinema.org/a/TzKCR8LY7ZHg60Wcd724pKs9a)
