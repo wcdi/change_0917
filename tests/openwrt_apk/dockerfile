@@ -4,4 +4,4 @@ COPY run.sh /
 
 # 実行
 RUN mkdir /var/log
-RUN sh /run.sh -y
+RUN sh /run.sh -yn

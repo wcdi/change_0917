@@ -3,4 +3,4 @@ FROM --platform=linux/amd64 debian:bookworm
 COPY run.sh /
 
 # 実行
-RUN sh /run.sh -y
+RUN sh /run.sh -yn
