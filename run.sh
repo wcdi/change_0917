@@ -1,9 +1,12 @@
 #!/bin/sh
 set -eu
 
+sudo="sudo"
+
 # Abort if not root and sudo is unavailable
-if [ $USER != "root" ] ; then 
-  if !  command -v sudo >/dev/null 2>&1 ; then
+if ! command -v sudo >/dev/null 2>&1 ; then
+  sudo=""
+  if [ $USER != "root" ] ; then 
     echo "This script must be run as root."
     exit 1
   fi
@@ -170,24 +173,30 @@ ubuntu(){
   source_file="/etc/apt/sources.list"
   backup_file="/etc/apt/sources.list.bk"
   command="apt-get update"
-  if [ -e $source_file ]; then
+  if $sudo test -e $source_file ; then
     # after 24.04
     source_file="/etc/apt/sources.list.d/ubuntu.sources"
     backup_file="/etc/apt/ubuntu.sources.bk"
   fi
+
+  # Detect "mirror.hashy0917.net" domain from $source_file 
+  if $sudo grep "mirror.hashy0917.net" $source_file >/dev/null 2>&1 ; then
+    echo "Already changed: Detected “mirror.hashy0917.net” domain in $source_file"
+    exit 1
+  fi
   
   # make backup
-  if [ -e $backup_file ]; then
+  if $sudo test -e $backup_file ; then
     # backup exists
     echo "Backup failed: $backup_file is already."
     exit 1  
   fi
-  cp $source_file $source_file.bk
+  $sudo cp $source_file $source_file.bk
 
   # change repository
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
+  $sudo sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
 
   # update command
-  $command
+  $sudo $command
 }
 
