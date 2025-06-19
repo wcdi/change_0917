@@ -2,7 +2,7 @@
 set -eu
 
 # Detect sudo
-if [ "$USER" == "root" ]; then
+if test $(id -u) -eq 0 ; then
   mysudo() {
     eval "$@"
   }
@@ -38,8 +38,8 @@ chkfs() {
   fi
 }
 
-debian() {
-  sed 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmpfile
+simple() {
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmpfile
 }
 
 # domain
@@ -61,15 +61,15 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
   case "$ID" in
      ubuntu)
-      srcpath="/etc/apt/sources.list"
-      bkpath="/etc/apt/sources.list.bk"
+      srcpath="/etc/apt/sources.list.d/ubuntu.sources"
+      bkpath="/etc/apt/ubuntu.sources.bk"
       pkgmgr="apt-get update"
-      churl="debian"
+      churl="simple"
 
-      if mysudo test -e $srcpath ; then
-        # after 24.04
-        srcpath="/etc/apt/sources.list.d/ubuntu.sources"
-        bkpath="/etc/apt/ubuntu.sources.bk"
+      if ! mysudo test -e $srcpath ; then
+        # before 24.04
+        srcpath="/etc/apt/sources.list"
+        bkpath="/etc/apt/sources.list.bk"
       fi
       ;;
     *)
@@ -83,18 +83,21 @@ fi
 chkfs
 
 # change repository
-mysudo cp $srcpath $tmpfile
+mysudo cat $srcpath > $tmpfile
 eval "$churl"
 
 # show diff
 mysudo $diff $srcpath $tmpfile || true
 echo 'Apply the changes? [confirm]'
-read _
+read i
+if test -z $i ; then
+  # make backup
+  mysudo cp $srcpath $bkpath
 
-# make backup
-mysudo cp $srcpath $bkpath
-
-# update command
-mysudo rm $srcpath
-mysudo cp $tmpfile $srcpath
-mysudo $pkgmgr
+  # update command
+  mysudo rm $srcpath
+  mysudo cp $tmpfile $srcpath
+  mysudo $pkgmgr
+else 
+  echo 'abort.'
+fi 
