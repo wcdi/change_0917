@@ -222,6 +222,7 @@ eval "$churl"
 # dry run
 if test $dryrun -eq 1 ; then
   mydiff
+  exit 0
 fi
 
 input=""
