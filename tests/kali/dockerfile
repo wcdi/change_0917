@@ -1,4 +1,4 @@
-FROM kalilinux/kali-rolling
+FROM --platform=linux/amd64 kalilinux/kali-rolling
 
 COPY run.sh /
 

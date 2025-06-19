@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM --platform=linux/amd64 debian:bullseye
 
 COPY run.sh /
 
