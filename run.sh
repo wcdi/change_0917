@@ -53,21 +53,21 @@ check() {
 }
 
 arch() {
-  sed -i '1i server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $tmpfile
+  sed -i '1i server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $tmppath
 }
 
 simple() {
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmpfile
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
 }
 
 parrot() {
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmpfile
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
   # (Preserve paths that include 'direct'.)
-  sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $tmpfile
+  sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $tmppath
 }
 
 openwrt() {
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $tmpfile
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $tmppath
 }
 
 # domain
@@ -80,8 +80,8 @@ churl=""
 srcpath=""
 bkpath=""
 # tmp
-tmpfile=$(mktemp)
-trap 'rm -f "$tmpfile"' EXIT
+tmppath=$(mktemp)
+trap 'rm -f "$tmppath"' EXIT
 
 
 # Set variables for each Distribution
@@ -169,12 +169,12 @@ fi
 check
 
 # change repository
-mysudo cat $srcpath > $tmpfile
+mysudo cat $srcpath > $tmppath
 eval "$churl"
 
 # show diff
 if test $yes -eq 1 ; then
-  mysudo $diff $srcpath $tmpfile || true
+  mysudo $diff $srcpath $tmppath || true
   echo 'Apply the changes? [confirm]'
   read i
 else
@@ -187,7 +187,7 @@ if test -z $i ; then
 
   # update command
   mysudo rm $srcpath
-  mysudo cp $tmpfile $srcpath
+  mysudo cp $tmppath $srcpath
   mysudo $pkgmgr
 
   echo "The script has finished successfully."
