@@ -26,7 +26,7 @@ debian() {
 }
 
 # command
-sudo=$(command -v diff 2>/dev/null)
+sudo=$(command -v sudo 2>/dev/null)
 diff=$(if ! command -v diff 2>/dev/null ; then print 'cat'; fi)
 pkgmgr=""
 churl=""
