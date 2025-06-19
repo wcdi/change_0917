@@ -48,24 +48,22 @@ kali(){
 }
 
 openwrt(){
+  source_file="/etc/opkg/distfeeds.conf"
+  command="opkg update"
+
+  # APK対応
   if [ -d /etc/apk ]; then
     source_file="/etc/apk/repositories.d/distfeeds.list"
-    if $(cat $source_file | awk 'BEGIN{FS="/";res=1} $0~/mirror\.hashy0917\.net/{res=0; print $0; exit} END{exit res}'); then
-      cp $source_file $source_file.bk
-      sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
-      apk update
-    else
-      echo "Update failed: Already modified."
-    fi
+    command="apk update"
+  fi
+
+  # 変更済みかどうか確認する
+  if cat $source_file | awk 'BEGIN{FS="/";res=0} $0~/mirror\.hashy0917\.net/{res=1; exit} END{exit res}' ; then
+    cp $source_file $source_file.bk
+    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
+    $command
   else
-    source_file="/etc/opkg/distfeeds.conf"
-    if $(cat $source_file | awk 'BEGIN{FS="/";res=1} $0~/mirror\.hashy0917\.net/{res=0; print $0; exit} END{exit res}'); then
-      cp $source_file $source_file.bk
-      sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
-      opkg update
-    else
-      echo "Update failed: Already modified."
-    fi
+    echo "Update failed: Already modified."
   fi
 }
 
