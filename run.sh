@@ -2,17 +2,27 @@
 set -eu
 
 # args
-yes=1
-if test $# -ge 1 ; then
+confirm=1
+pkgupd=1
+while getopts "ynh" opt; do
   case "$1" in
-    "-y")
-      yes=0
+    "y")
+      confirm=0
     ;;
+    "n")
+      pkgupd=0
+    ;;
+    "h")
+      echo "Usage: $0 [-yn]" >&2
+      echo "Options:" >&2
+      echo "  -y : Skip confirmation (dockerfile recommended)" >&2
+      echo "  -n : Skip package manager updates" >&2
+      exit 1
     *)
       :
     ;;
   esac
-fi
+done
 
 # Allow execution from general users in environments where sudo is available.
 if test $(id -u) -eq 0 ; then
@@ -75,9 +85,6 @@ commit() {
   # changing sources files
   mysudo rm $srcpath
   mysudo cp $tmppath $srcpath
-
-  # update package cache
-  mysudo $pkgmgr
 }
 
 arch() {
@@ -207,19 +214,24 @@ check
 mysudo cat $srcpath > $tmppath
 eval "$churl"
 
-confirm=""
+input=""
 
-# check -y args
-if test $yes -eq 1 ; then
+# user confirm
+if test $confirm -eq 1 ; then
   # show diff
   mydiff
   echo 'Apply the changes? [confirm]'
-  read confirm
+  read input
 fi
 
-if test -z $confirm ; then
+if test -z $input ; then
   # file changed
   commit
+
+  # update package cache
+  if test $pkgupd -eq 1 ; then
+    mysudo $pkgmgr
+  fi
 
   echo "The script has finished successfully."
   exit 0
