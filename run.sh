@@ -1,6 +1,16 @@
 #!/bin/sh
 set -eu
 
+# Abort if not root and sudo is unavailable
+if [ $USER != "root" ] ; then 
+  if !  command -v sudo >/dev/null 2>&1 ; then
+    echo "This script must be run as root."
+    exit 1
+  fi
+fi
+
+
+
 arch(){
   # path
   source_file="/etc/pacman.d/mirrorlist"
@@ -12,9 +22,8 @@ arch(){
     # backup exists
     echo "Backup failed: $backup_file is already."
     exit 1  
-  else 
-    cp $source_file $source_file.bk
   fi
+  cp $source_file $source_file.bk
 
   # change repository
   if [ -f $source_file ]; then
@@ -39,9 +48,8 @@ debian(){
     # backup exists
     echo "Backup failed: $backup_file is already."
     exit 1  
-  else 
-    cp $source_file $source_file.bk
   fi
+  cp $source_file $source_file.bk
 
   # change repository
   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
@@ -51,17 +59,29 @@ debian(){
 }
 
 kali(){
-  APT="/etc/apt"
-  source_file=""
-  if [ -f $APT/sources.list.d/kali.sources ]; then
-    source_file="${APT}/sources.list.d/kali.sources"
-     cp $source_file ${APT}/kali.sources.bk
-  else
-    source_file="${APT}/sources.list"
-     cp $source_file $source_file.bk
+  # path
+  source_file="/etc/apt/sources.list"
+  backup_file="/etc/apt/sources.list.bk"
+  command="apt-get update"
+  if [ -e $source_file ]; then
+    # after 24.04
+    source_file="/etc/apt/sources.list.d/kali.sources"
+    backup_file="/etc/apt/kali.sources.bk"
   fi
-   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
-   apt-get update
+  
+  # make backup
+  if [ -e $backup_file ]; then
+    # backup exists
+    echo "Backup failed: $backup_file is already."
+    exit 1  
+  fi
+  cp $source_file $source_file.bk
+
+  # change repository
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
+
+  # update command
+  $command
 }
 
 openwrt(){
@@ -81,9 +101,8 @@ openwrt(){
     # backup exists
     echo "Backup failed: $backup_file is already."
     exit 1  
-  else 
-    cp $source_file $source_file.bk
   fi
+  cp $source_file $source_file.bk
 
   # change repository
   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
@@ -103,9 +122,8 @@ parrot(){
     # backup exists
     echo "Backup failed: $backup_file is already."
     exit 1  
-  else 
-    cp $source_file $source_file.bk
   fi
+  cp $source_file $source_file.bk
 
   # change repository
   # (Preserve paths that include 'direct'.)
@@ -132,9 +150,8 @@ ubuntu(){
     # backup exists
     echo "Backup failed: $backup_file is already."
     exit 1  
-  else 
-    cp $source_file $source_file.bk
   fi
+  cp $source_file $source_file.bk
 
   # change repository
   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
