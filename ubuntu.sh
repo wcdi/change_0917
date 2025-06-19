@@ -1,20 +1,37 @@
 #!/bin/sh
 set -eu
 
+# Detect sudo
+if [ "$USER" == "root" ]; then
+  mysudo() {
+    eval "$@"
+  }
+else 
+  if command -v sudo >/dev/null 2>&1; then
+    mysudo() {
+      eval "sudo $@"
+    }
+  else
+    echo "This script must be run as root or have sudo available." >&2
+    exit 1
+  fi
+fi
+
+
 chkfs() {
   # Detect source_file
-  if ! $sudo test -e $srcpath ; then
+  if ! mysudo test -e $srcpath ; then
     echo "$srcpath is not found"
     exit 1
   fi
 
-  # Detect "mirror.hashy0917.net" domain from $source_file 
-  if $sudo grep "mirror.hashy0917.net" $srcpath >/dev/null 2>&1 ; then
-    echo "Already changed: Detected “mirror.hashy0917.net” domain in $srcpath"
+  # Detect $URL domain from $source_file 
+  if mysudo grep $URL $srcpath >/dev/null 2>&1 ; then
+    echo "Already changed: Detected “$URL” domain in $srcpath"
     exit 1
   fi
 
-  if $sudo test -e $bkpath ; then
+  if mysudo test -e $bkpath ; then
     # backup exists
     echo "Backup failed: $bkpath is already."
     exit 1  
@@ -22,11 +39,12 @@ chkfs() {
 }
 
 debian() {
-  cat $srcpath | sed 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' > $tmpfile
+  sed 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmpfile
 }
 
+# domain
+URL="mirror.hashy0917.net"
 # command
-sudo=$(command -v sudo 2>/dev/null)
 diff=$(if ! command -v diff 2>/dev/null ; then print 'cat'; fi)
 pkgmgr=""
 churl=""
@@ -37,13 +55,6 @@ bkpath=""
 tmpfile=$(mktemp)
 trap 'rm -f "$tmpfile"' EXIT
 
-# Abort if not root and sudo is unavailable
-if test -z $sudo ; then
-  if [ $USER != "root" ] ; then 
-    echo "This script must be run as root."
-    exit 1
-  fi
-fi
 
 # Set variables for each Distribution
 if [ -f /etc/os-release ]; then
@@ -55,7 +66,7 @@ if [ -f /etc/os-release ]; then
       pkgmgr="apt-get update"
       churl="debian"
 
-      if $sudo test -e $srcpath ; then
+      if mysudo test -e $srcpath ; then
         # after 24.04
         srcpath="/etc/apt/sources.list.d/ubuntu.sources"
         bkpath="/etc/apt/ubuntu.sources.bk"
@@ -71,18 +82,19 @@ fi
 # check files
 chkfs
 
-# make backup
-$sudo cp $srcpath $srcpath.bk
-
 # change repository
-$churl
+mysudo cp $srcpath $tmpfile
+eval "$churl"
 
 # show diff
-$sudo $diff $srcpath $tmpfile
+mysudo $diff $srcpath $tmpfile || true
 echo 'Apply the changes? [confirm]'
-read
+read _
+
+# make backup
+mysudo cp $srcpath $bkpath
 
 # update command
 rm $srcpath
 cp $tmpfile $srcpath
-$sudo $pkgmgr
+mysudo $pkgmgr
