@@ -124,7 +124,7 @@ srcpath=""
 bkpath=""
 # tmp
 tmppath=$(mktemp)
-trap 'rm -f "$tmppath"' EXIT
+trap 'rm -f "$tmppath"' EXIT INT TERM
 
 
 # Set variables for each Distribution
