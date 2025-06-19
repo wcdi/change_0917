@@ -66,6 +66,10 @@ parrot() {
   sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $tmpfile
 }
 
+openwrt() {
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $tmpfile
+}
+
 # domain
 URL="mirror.hashy0917.net"
 # command
@@ -128,6 +132,19 @@ if [ -f /etc/os-release ]; then
         srcpath="/etc/apt/sources.list"
         bkpath="/etc/apt/sources.list.bk"
       fi
+      ;;
+    openwrt)
+      srcpath="/etc/opkg/distfeeds.conf"
+      bkpath="$srcpath.bk"
+      pkgmgr="opkg update"
+      churl="openwrt"
+
+      if [ -d /etc/apk ]; then
+        # Detect apk-based OpenWrt 
+        srcpath="/etc/apk/repositories.d/distfeeds.list"
+        bkpath="$srcpath.bk"
+        pkgmgr="apk update"
+      fi 
       ;;
     ubuntu)
       srcpath="/etc/apt/sources.list.d/ubuntu.sources"
