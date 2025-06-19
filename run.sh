@@ -9,6 +9,37 @@ if [ $USER != "root" ] ; then
   fi
 fi
 
+# Get distribution
+if [ -f /etc/os-release ]; then
+  . /etc/os-release
+  case "$ID" in
+    arch)
+      arch
+      ;;
+    debian)
+      case "$NAME" in
+        "Parrot Security")
+          parrot
+          ;;
+        *)
+          debian
+          ;;
+      esac
+      ;;
+    kali)
+      kali
+      ;;
+    openwrt)
+      openwrt
+      ;;
+    ubuntu)
+      ubuntu
+      ;;
+    *)
+      echo "This distribution is not supported."
+      ;;
+  esac
+fi
 
 
 arch(){
@@ -160,34 +191,3 @@ ubuntu(){
   $command
 }
 
-# Get distribution
-if [ -f /etc/os-release ]; then
-  . /etc/os-release
-  case "$ID" in
-    arch)
-      arch
-      ;;
-    debian)
-      case "$NAME" in
-        "Parrot Security")
-          parrot
-          ;;
-        *)
-          debian
-          ;;
-      esac
-      ;;
-    kali)
-      kali
-      ;;
-    openwrt)
-      openwrt
-      ;;
-    ubuntu)
-      ubuntu
-      ;;
-    *)
-      echo "This distribution is not supported."
-      ;;
-  esac
-fi
