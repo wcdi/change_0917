@@ -3,10 +3,10 @@ set -eu
 
 # args
 yes=1
-if test $? -ge 1 ; then
+if test $# -ge 1 ; then
   case "$1" in
     "-y")
-     yes=0
+      yes=0
     ;;
     *)
       :
@@ -113,11 +113,15 @@ mysudo cat $srcpath > $tmpfile
 eval "$churl"
 
 # show diff
-mysudo $diff $srcpath $tmpfile || true
-echo 'Apply the changes? [confirm]'
-read i
+if test $yes -eq 1 ; then
+  mysudo $diff $srcpath $tmpfile || true
+  echo 'Apply the changes? [confirm]'
+  read i
+else
+  i=""
+fi
 
-if test -z $i || test $yes -eq 0 ; then
+if test -z $i ; then
   # make backup
   mysudo cp $srcpath $bkpath
 
