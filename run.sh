@@ -1,130 +1,258 @@
 #!/bin/sh
 set -eu
 
-arch(){
-  source="/etc/pacman.d/mirrorlist"
-  if [ -f $source ]; then
-    cp $source ${source}.bk
-    echo 'Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' > $source
-    cat $source.bk >> $source
-  fi
-  # pacman -Syyu
-}
+# args
+confirm=1
+pkgupd=1
+dryrun=0
+while getopts "ynhd" opt; do
+  case "$opt" in
+    "h")
+      echo Change the mirror server to mirror.hashy0917.net
+      echo
+      echo "Usage: $0 [-yn]" >&2
+      echo "Options:" >&2
+      echo "  -y : Skip confirmation (dockerfile recommended)" >&2
+      echo "  -n : Skip package manager updates" >&2
+      echo "  -d : Dry run" >&2
+      exit 1
+    ;;
+    "y")
+      confirm=0
+    ;;
+    "n")
+      pkgupd=0
+    ;;
+    "d")
+      dryrun=1
+    ;;
+    *)
+      :
+    ;;
+  esac
+done
 
-debian(){
-  # APT="/etc/apt"
-  # source_file="${APT}/sources.list"
-  # if [ -f $source_file ]; then
-  #    cp $source_file $source_file.bk
-  #    sed -i 's-ht.*//.*/-http://mirror.hashy0917.net/debian/-' $source_file
-  #    apt-get update
-  # fi
-  APT="/etc/apt"
-  source_file=""
-  # 24.04以降ファイルの位置が変わった
-  if [ -f $APT/sources.list.d/debian.sources ]; then
-    source_file="${APT}/sources.list.d/debian.sources"
-     cp $source_file ${APT}/debian.sources.bk
+# Allow execution from general users in environments where sudo is available.
+if test $(id -u) -eq 0 ; then
+  mysudo() {
+    eval "$@"
+  }
+else 
+  if command -v sudo >/dev/null 2>&1; then
+    mysudo() {
+      eval "sudo $@"
+    }
+  elif command -v doas >/dev/null 2>&1; then
+    mysudo() {
+      eval "doas $@"
+    }
   else
-    source_file="${APT}/sources.list"
-     cp $source_file $source_file.bk
+    echo "This script must be run as root or have sudo available." >&2
+    exit 1
   fi
-   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
-   apt-get update
-}
+fi
 
-kali(){
-  APT="/etc/apt"
-  source_file=""
-  if [ -f $APT/sources.list.d/kali.sources ]; then
-    source_file="${APT}/sources.list.d/kali.sources"
-     cp $source_file ${APT}/kali.sources.bk
-  else
-    source_file="${APT}/sources.list"
-     cp $source_file $source_file.bk
-  fi
-   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
-   apt-get update
-}
+# File diffs independent of environment
+if command -v diff >/dev/null 2>&1; then
+  mydiff() {
+    eval "diff $srcpath $tmppath" || true
+  }
+else
+  mydiff() {
+    echo "<<< old"
+    mysudo grep -E 'ht.*//[A-Za-z0-9.]*/' $srcpath || true
+    echo ">>> new"
+    grep -E 'ht.*//[A-Za-z0-9.]*/' $tmppath || true
+  }
+fi
 
-openwrt(){
-  source_file="/etc/opkg/distfeeds.conf"
-  command="opkg update"
-
-  # APK対応
-  if [ -d /etc/apk ]; then
-    source_file="/etc/apk/repositories.d/distfeeds.list"
-    command="apk update"
+check() {
+  # Detect source_file
+  if ! mysudo test -e $srcpath ; then
+    echo "$srcpath is not found"  >&2
+    exit 1
   fi
 
-  # バックアップが存在する場合はエラーにする
-  if [ -e $source_file.bk ]; then
-    echo "Backup failed: $source_file.bk is already."
+  # Detect $URL domain from $source_file 
+  if mysudo grep $URL $srcpath >/dev/null 2>&1 ; then
+    echo "Already changed: Detected “$URL” domain in $srcpath"  >&2
+    exit 1
+  fi
+
+  if mysudo test -e $bkpath ; then
+    # backup exists
+    echo "Backup failed: $bkpath is already."  >&2
     exit 1  
-  else 
-    cp $source_file $source_file.bk
   fi
-
-  # URLを書き換える
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
-    
-  $command
 }
 
-parrot(){
-  APT="/etc/apt"
-  source_file="${APT}/sources.list.d/parrot.list"
-  # バックアップ作成
-  cp $source_file ${APT}/parrot.list.bk
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
-  # directがついているものだけは元に戻す
-  sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $source_file
-  apt-get update
+commit() {
+  # create backup
+  mysudo cp $srcpath $bkpath
+
+  # changing sources files
+  mysudo rm $srcpath
+  mysudo cp $tmppath $srcpath
 }
 
-ubuntu(){
-  APT="/etc/apt"
-  source_file=""
-  # 24.04以降ファイルの位置が変わった
-  if [ -f $APT/sources.list.d/ubuntu.sources ]; then
-    source_file="${APT}/sources.list.d/ubuntu.sources"
-     cp $source_file ${APT}/ubuntu.sources.bk
+arch() {
+  sed -i '1i Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $tmppath
+}
+
+simple() {
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
+}
+
+parrot() {
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
+  # (Preserve paths that include 'direct'.)
+  sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $tmppath
+}
+
+openwrt() {
+  if grep -E 'ht.*//[A-Za-z0-9.]*/openwrt/' >/dev/null 2>&1 $tmppath ; then
+    sed -i 's-ht.*//[A-Za-z0-9.]*/openwrt/-http://mirror.hashy0917.net/openwrt/-' $tmppath
   else
-    source_file="${APT}/sources.list"
-     cp $source_file $source_file.bk
+    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $tmppath
   fi
-   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
-   apt-get update
 }
 
-# ディストリビューションのバージョン取得
+#########################################################################
+
+# set default variables.
+
+# domain
+URL="mirror.hashy0917.net"
+# command
+pkgmgr=""
+churl=""
+# repo_list
+srcpath=""
+bkpath=""
+# tmp
+tmppath=$(mktemp)
+trap 'rm -f "$tmppath"' EXIT INT TERM
+
+
+# Set variables for each Distribution
 if [ -f /etc/os-release ]; then
-  . /etc/os-release #source /etc/os-release
+  . /etc/os-release
   case "$ID" in
     arch)
-      arch
-      ;;
+      srcpath="/etc/pacman.d/mirrorlist"
+      bkpath="$srcpath.bk"
+      pkgmgr='echo "Please add -y option when running pacman next time. (for example: pacman -Syu)"'
+      churl="arch"
+    ;;
     debian)
+      pkgmgr="apt-get update"
       case "$NAME" in
         "Parrot Security")
-          parrot
+          srcpath="/etc/apt/sources.list.d/parrot.list"
+          bkpath="/etc/apt/parrot.list.bk"
+
+          if ! mysudo test -e $srcpath ; then
+            # before 24.04
+            srcpath="/etc/apt/sources.list"
+            bkpath="/etc/apt/sources.list.bk"
+          fi
+          churl="parrot"
           ;;
         *)
-          debian
+          srcpath="/etc/apt/sources.list.d/debian.sources"
+          bkpath="/etc/apt/debian.sources.bk"
+
+          if ! mysudo test -e $srcpath ; then
+            # before 24.04
+            srcpath="/etc/apt/sources.list"
+            bkpath="/etc/apt/sources.list.bk"
+          fi
+          churl="simple"
           ;;
       esac
       ;;
     kali)
-      kali
+      srcpath="/etc/apt/sources.list.d/kali.sources"
+      bkpath="/etc/apt/kali.sources.bk"
+      pkgmgr="apt-get update"
+      churl="simple"
+
+      if ! mysudo test -e $srcpath ; then
+        # before 24.04
+        srcpath="/etc/apt/sources.list"
+        bkpath="/etc/apt/sources.list.bk"
+      fi
       ;;
     openwrt)
-      openwrt
+      srcpath="/etc/opkg/distfeeds.conf"
+      bkpath="$srcpath.bk"
+      pkgmgr="opkg update"
+      churl="openwrt"
+
+      if [ -d /etc/apk ]; then
+        # Detect apk-based OpenWrt 
+        srcpath="/etc/apk/repositories.d/distfeeds.list"
+        bkpath="$srcpath.bk"
+        pkgmgr="apk update"
+      fi 
       ;;
     ubuntu)
-      ubuntu
+      srcpath="/etc/apt/sources.list.d/ubuntu.sources"
+      bkpath="/etc/apt/ubuntu.sources.bk"
+      pkgmgr="apt-get update"
+      churl="simple"
+
+      if ! mysudo test -e $srcpath ; then
+        # before 24.04
+        srcpath="/etc/apt/sources.list"
+        bkpath="/etc/apt/sources.list.bk"
+      fi
       ;;
     *)
-      echo "https://mirror.hashy0917.net/"
+      echo "This distribution is not supported."  >&2
+      exit 1
       ;;
   esac
+else
+  echo "This OS is not supported."  >&2
+  exit 1
 fi
+
+# check files
+check
+
+# change repository
+mysudo cat $srcpath > $tmppath
+eval "$churl"
+
+# dry run
+if test $dryrun -eq 1 ; then
+  mydiff
+  exit 0
+fi
+
+input=""
+
+# user confirm
+if test $confirm -eq 1 ; then
+  # show diff
+  mydiff
+  echo 'Apply the changes? [confirm]'
+  read input
+fi
+
+if test -z $input ; then
+  # file changed
+  commit
+
+  # update package cache
+  if test $pkgupd -eq 1 ; then
+    mysudo $pkgmgr
+  fi
+
+  echo "The script has finished successfully."
+  exit 0
+else 
+  echo 'abort.' >&2
+  exit 1
+fi 

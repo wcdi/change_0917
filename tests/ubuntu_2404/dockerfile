@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 parrotsec/core
+FROM --platform=linux/amd64 ubuntu:24.04
 
 COPY run.sh /
 

@@ -1,9 +1,6 @@
-FROM debian:bookworm
+FROM --platform=linux/amd64 debian:bookworm
 
 COPY run.sh /
 
-# 依存関係のDL
-# RUN apt-get update && apt-get install -y sudo
-
 # 実行
-RUN sh /run.sh
+RUN sh /run.sh -yn
