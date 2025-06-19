@@ -213,6 +213,9 @@ if [ -f /etc/os-release ]; then
       exit 1
       ;;
   esac
+else
+  echo "This OS is not supported."  >&2
+  exit 1
 fi
 
 # check files
