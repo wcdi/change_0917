@@ -59,10 +59,10 @@ openwrt(){
 
   # バックアップが存在する場合はエラーにする
   if [ -f $source_file.bk ]; then
+    cp $source_file $source_file.bk
+  else 
     echo "Backup failed: $source_file.bk is already."
     exit 1
-  else 
-    cp $source_file $source_file.bk
   fi
 
   # URLを変更し、ファイルを書き換える
@@ -83,11 +83,11 @@ openwrt(){
     }' $source_file > /tmp/changed_$(basename $source_file) ; then
     rm $source_file
     mv /tmp/changed_$(basename $source_file) $source_file
+    $command
   else
     echo "Update failed: Already modified."
+    exit 1
   fi
-  
-  $command
 }
 
 parrot(){
