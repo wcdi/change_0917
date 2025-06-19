@@ -50,14 +50,22 @@ kali(){
 openwrt(){
   if [ -d /etc/apk ]; then
     source_file="/etc/apk/repositories.d/distfeeds.list"
-    cp $source_file $source_file.bk
-    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
-    apk update
+    if $(cat $source_file | awk 'BEGIN{FS="/";res=1} $0~/mirror\.hashy0917\.net/{res=0; print $0; exit} END{exit res}'); then
+      cp $source_file $source_file.bk
+      sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
+      apk update
+    else
+      echo "Update failed: Already modified."
+    fi
   else
     source_file="/etc/opkg/distfeeds.conf"
-    cp $source_file $source_file.bk
-    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
-    opkg update
+    if $(cat $source_file | awk 'BEGIN{FS="/";res=1} $0~/mirror\.hashy0917\.net/{res=0; print $0; exit} END{exit res}'); then
+      cp $source_file $source_file.bk
+      sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
+      opkg update
+    else
+      echo "Update failed: Already modified."
+    fi
   fi
 }
 
