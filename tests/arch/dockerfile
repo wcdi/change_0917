@@ -2,10 +2,7 @@ FROM archlinux
 
 COPY run.sh /
 
-# 既存のmirrorを削除
-RUN rm /etc/pacman.d/mirrorlist && touch /etc/pacman.d/mirrorlist
-
 # 実行
-RUN sh /run.sh
+RUN sh /run.sh -y
 
 RUN yes | pacman -Syu

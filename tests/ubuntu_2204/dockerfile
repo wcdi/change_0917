@@ -1,4 +1,4 @@
-FROM kalilinux/kali-rolling
+FROM ubuntu:22.04
 
 COPY run.sh /
 
