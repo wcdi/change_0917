@@ -65,30 +65,10 @@ openwrt(){
     cp $source_file $source_file.bk
   fi
 
-  # URLを変更し、ファイルを書き換える
-  if awk '{ 
-      # URLがある行を変更する
-      if ($0~/ht.*\/\/[A-Za-z0-9.]*\//){ 
-        # snapshots or releasesでURLを特定する
-        if (sub(/ht.*\/\/[A-Za-z0-9.]*\/.*snapshots/, "http://mirror.hashy0917.net/openwrt/snapshots") == 0) {
-          sub(/ht.*\/\/[A-Za-z0-9.]*\/.*releases/, "http://mirror.hashy0917.net/openwrt/releases")
-        }
-        res=1 
-      } 
-      print $0
-    } 
-    END {
-      # 変更があった場合は1(true)を出力する
-      exit res
-    }' $source_file > /tmp/changed_$(basename $source_file) ; then
-    rm $source_file
-    mv /tmp/changed_$(basename $source_file) $source_file
-    $command
-  else
-    echo "Update failed: Already modified."
-    rm $source_file.bk
-    exit 1
-  fi
+  # URLを書き換える
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
+    
+  $command
 }
 
 parrot(){
