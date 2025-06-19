@@ -1,6 +1,30 @@
 #!/bin/sh
 set -eu
 
+checkfiles() {
+  # Detect source_file
+  if ! $sudo test -e $source_file ; then
+    echo "$source_file is not found"
+    exit 1
+  fi
+
+  # Detect "mirror.hashy0917.net" domain from $source_file 
+  if $sudo grep "mirror.hashy0917.net" $source_file >/dev/null 2>&1 ; then
+    echo "Already changed: Detected “mirror.hashy0917.net” domain in $source_file"
+    exit 1
+  fi
+
+  if $sudo test -e $backup_file ; then
+    # backup exists
+    echo "Backup failed: $backup_file is already."
+    exit 1  
+  fi
+}
+
+debian() {
+  cat $source_file | sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' > $tmp_file
+}
+
 # command
 sudo=$(command -v diff 2>/dev/null)
 diff=$(if ! command -v diff 2>/dev/null ; then print 'cat'; fi)
@@ -62,27 +86,3 @@ read
 rm $source_file
 cp $tmp_file $source_file
 $sudo $pkgmgr
-
-checkfiles() {
-  # Detect source_file
-  if ! $sudo test -e $source_file ; then
-    echo "$source_file is not found"
-    exit 1
-  fi
-
-  # Detect "mirror.hashy0917.net" domain from $source_file 
-  if $sudo grep "mirror.hashy0917.net" $source_file >/dev/null 2>&1 ; then
-    echo "Already changed: Detected “mirror.hashy0917.net” domain in $source_file"
-    exit 1
-  fi
-
-  if $sudo test -e $backup_file ; then
-    # backup exists
-    echo "Backup failed: $backup_file is already."
-    exit 1  
-  fi
-}
-
-debian() {
-  cat $source_file | sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' > $tmp_file
-}
