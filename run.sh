@@ -169,7 +169,7 @@ parrot(){
 }
 
 ubuntu(){
-  # path
+  # set path
   source_file="/etc/apt/sources.list"
   backup_file="/etc/apt/sources.list.bk"
   command="apt-get update"
