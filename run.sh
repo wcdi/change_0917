@@ -56,6 +56,12 @@ simple() {
   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmpfile
 }
 
+parrot() {
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmpfile
+  # (Preserve paths that include 'direct'.)
+  sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $tmpfile
+}
+
 # domain
 URL="mirror.hashy0917.net"
 # command
@@ -75,16 +81,31 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
   case "$ID" in
     debian)
-      srcpath="/etc/apt/sources.list.d/debian.sources"
-      bkpath="/etc/apt/debian.sources.bk"
       pkgmgr="apt-get update"
-      churl="simple"
+      case "$NAME" in
+        "Parrot Security")
+          srcpath="/etc/apt/sources.list.d/parrot.list"
+          bkpath="/etc/apt/parrot.list.bk"
 
-      if ! mysudo test -e $srcpath ; then
-        # before 24.04
-        srcpath="/etc/apt/sources.list"
-        bkpath="/etc/apt/sources.list.bk"
-      fi
+          if ! mysudo test -e $srcpath ; then
+            # before 24.04
+            srcpath="/etc/apt/sources.list"
+            bkpath="/etc/apt/sources.list.bk"
+          fi
+          churl="parrot"
+          ;;
+        *)
+          srcpath="/etc/apt/sources.list.d/debian.sources"
+          bkpath="/etc/apt/debian.sources.bk"
+
+          if ! mysudo test -e $srcpath ; then
+            # before 24.04
+            srcpath="/etc/apt/sources.list"
+            bkpath="/etc/apt/sources.list.bk"
+          fi
+          churl="simple"
+          ;;
+      esac
       ;;
     ubuntu)
       srcpath="/etc/apt/sources.list.d/ubuntu.sources"
