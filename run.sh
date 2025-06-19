@@ -2,35 +2,52 @@
 set -eu
 
 arch(){
-  source="/etc/pacman.d/mirrorlist"
-  if [ -f $source ]; then
-    cp $source ${source}.bk
-    echo 'Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' > $source
-    cat $source.bk >> $source
+  # path
+  source_file="/etc/pacman.d/mirrorlist"
+  backup_file="$source_file.bk"
+  command='echo "Please add -y option when running pacman next time. (for example: pacman -Syu)"'
+
+  # make backup
+  if [ -e $backup_file ]; then
+    # backup exists
+    echo "Backup failed: $backup_file is already."
+    exit 1  
+  else 
+    cp $source_file $source_file.bk
   fi
-  # pacman -Syyu
+
+  # change repository
+  if [ -f $source_file ]; then
+    echo 'Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' > $source_file
+    cat $backup_file >> $source_file
+  fi
 }
 
 debian(){
-  # APT="/etc/apt"
-  # source_file="${APT}/sources.list"
-  # if [ -f $source_file ]; then
-  #    cp $source_file $source_file.bk
-  #    sed -i 's-ht.*//.*/-http://mirror.hashy0917.net/debian/-' $source_file
-  #    apt-get update
-  # fi
-  APT="/etc/apt"
-  source_file=""
-  # 24.04以降ファイルの位置が変わった
-  if [ -f $APT/sources.list.d/debian.sources ]; then
-    source_file="${APT}/sources.list.d/debian.sources"
-     cp $source_file ${APT}/debian.sources.bk
-  else
-    source_file="${APT}/sources.list"
-     cp $source_file $source_file.bk
+  # path
+  source_file="/etc/apt/sources.list"
+  backup_file="/etc/apt/sources.list.bk"
+  command="apt-get update"
+  if [ -e $source_file ]; then
+    # after 24.04
+    source_file="/etc/apt/sources.list.d/debian.sources"
+    backup_file="/etc/apt/debian.sources.bk"
   fi
-   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
-   apt-get update
+  
+  # make backup
+  if [ -e $backup_file ]; then
+    # backup exists
+    echo "Backup failed: $backup_file is already."
+    exit 1  
+  else 
+    cp $source_file $source_file.bk
+  fi
+
+  # change repository
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
+
+  # update command
+  $command
 }
 
 kali(){
@@ -48,58 +65,87 @@ kali(){
 }
 
 openwrt(){
+  # path
   source_file="/etc/opkg/distfeeds.conf"
+  backup_file="$source_file.bk"
   command="opkg update"
-
-  # APK対応
   if [ -d /etc/apk ]; then
+    # Detect apk-based OpenWrt 
     source_file="/etc/apk/repositories.d/distfeeds.list"
+    backup_file="$source_file.bk"
     command="apk update"
   fi
 
-  # バックアップが存在する場合はエラーにする
+  # make backup
   if [ -e $source_file.bk ]; then
-    echo "Backup failed: $source_file.bk is already."
+    # backup exists
+    echo "Backup failed: $backup_file is already."
     exit 1  
   else 
     cp $source_file $source_file.bk
   fi
 
-  # URLを書き換える
+  # change repository
   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
     
+  # update command
   $command
 }
 
 parrot(){
-  APT="/etc/apt"
-  source_file="${APT}/sources.list.d/parrot.list"
-  # バックアップ作成
-  cp $source_file ${APT}/parrot.list.bk
+  # path
+  source_file="/etc/apt/sources.list"
+  backup_file="/etc/apt/sources.list.bk"
+  command="apt-get update"
+  
+  # make backup
+  if [ -e $backup_file ]; then
+    # backup exists
+    echo "Backup failed: $backup_file is already."
+    exit 1  
+  else 
+    cp $source_file $source_file.bk
+  fi
+
+  # change repository
+  # (Preserve paths that include 'direct'.)
   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
-  # directがついているものだけは元に戻す
   sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $source_file
-  apt-get update
+
+  # update command
+  $command
 }
 
 ubuntu(){
-  APT="/etc/apt"
-  source_file=""
-  # 24.04以降ファイルの位置が変わった
-  if [ -f $APT/sources.list.d/ubuntu.sources ]; then
-    source_file="${APT}/sources.list.d/ubuntu.sources"
-     cp $source_file ${APT}/ubuntu.sources.bk
-  else
-    source_file="${APT}/sources.list"
-     cp $source_file $source_file.bk
+  # path
+  source_file="/etc/apt/sources.list"
+  backup_file="/etc/apt/sources.list.bk"
+  command="apt-get update"
+  if [ -e $source_file ]; then
+    # after 24.04
+    source_file="/etc/apt/sources.list.d/ubuntu.sources"
+    backup_file="/etc/apt/ubuntu.sources.bk"
   fi
-   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
-   apt-get update
+  
+  # make backup
+  if [ -e $backup_file ]; then
+    # backup exists
+    echo "Backup failed: $backup_file is already."
+    exit 1  
+  else 
+    cp $source_file $source_file.bk
+  fi
+
+  # change repository
+  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
+
+  # update command
+  $command
 }
 
-# ディストリビューションのバージョン取得
+# Get distribution
 if [ -f /etc/os-release ]; then
-  . /etc/os-release #source /etc/os-release
+  . /etc/os-release
   case "$ID" in
     arch)
       arch
@@ -124,7 +170,7 @@ if [ -f /etc/os-release ]; then
       ubuntu
       ;;
     *)
-      echo "https://mirror.hashy0917.net/"
+      echo "This distribution is not supported."
       ;;
   esac
 fi
