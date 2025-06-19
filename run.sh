@@ -18,6 +18,7 @@ while getopts "ynh" opt; do
       echo "  -y : Skip confirmation (dockerfile recommended)" >&2
       echo "  -n : Skip package manager updates" >&2
       exit 1
+    ;;
     *)
       :
     ;;
