@@ -53,6 +53,11 @@ $sudo cp $source_file $source_file.bk
 # change repository
 $churl
 
+# show diff
+$sudo $diff $source_file $tmp_file
+echo 'Apply the changes? [confirm]'
+read
+
 # update command
 $sudo $pkgmgr
 
@@ -77,5 +82,5 @@ checkfiles() {
 }
 
 debian() {
-  $sudo sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $source_file
+  cat $source_file | sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' > $tmp_file
 }
