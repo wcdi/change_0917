@@ -48,7 +48,6 @@ else
   }
 fi
 
-
 check() {
   # Detect source_file
   if ! mysudo test -e $srcpath ; then
@@ -69,6 +68,18 @@ check() {
   fi
 }
 
+commit() {
+  # create backup
+  mysudo cp $srcpath $bkpath
+
+  # changing sources files
+  mysudo rm $srcpath
+  mysudo cp $tmppath $srcpath
+
+  # update package cache
+  mysudo $pkgmgr
+}
+
 arch() {
   sed -i '1i Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $tmppath
 }
@@ -84,19 +95,11 @@ parrot() {
 }
 
 openwrt() {
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $tmppath
-}
-
-commit() {
-  # create backup
-  mysudo cp $srcpath $bkpath
-
-  # changing sources files
-  mysudo rm $srcpath
-  mysudo cp $tmppath $srcpath
-
-  # update package cache
-  mysudo $pkgmgr
+  if grep -E 'ht.*//[A-Za-z0-9.]*/openwrt/' >/dev/null 2>&1 $tmppath ; then
+    sed -i 's-ht.*//[A-Za-z0-9.]*/openwrt/-http://mirror.hashy0917.net/openwrt/-' $tmppath
+  else
+    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $tmppath
+  fi
 }
 
 #########################################################################
