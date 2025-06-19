@@ -1,0 +1,7 @@
+FROM --platform=linux/amd64 openwrt/rootfs:latest
+
+COPY run.sh /
+
+# 実行
+RUN mkdir /var/log
+RUN sh /run.sh -y
