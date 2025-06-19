@@ -57,14 +57,34 @@ openwrt(){
     command="apk update"
   fi
 
-  # 変更済みかどうか確認する
-  if cat $source_file | awk 'BEGIN{FS="/";res=0} $0~/mirror\.hashy0917\.net/{res=1; exit} END{exit res}' ; then
+  # バックアップが存在する場合はエラーにする
+  if [ -f $source_file.bk ]; then
+    echo "Backup failed: $source_file.bk is already."
+    exit 1
+  else 
     cp $source_file $source_file.bk
-    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $source_file
-    $command
+  fi
+
+  # URLを変更し、ファイルを書き換える
+  if awk '{ 
+      # 行にURLがあり、そのドメインがmirror.hashy0917.netでなければ変更する
+      if ($0~/ht.*\/\/[A-Za-z0-9.]*\// && $0!~/mirror.hashy0917.net/){ 
+        sub(/ht.*\/\/[A-Za-z0-9.]*\//, "http://mirror.hashy0917.net/openwrt/");
+        res=1 
+      } 
+      print $0
+    } 
+    END {
+      # 変更があった場合は1(true)を出力する
+      exit res
+    }' $source_file > /tmp/changed_$(basename $source_file) ; then
+    rm $source_file
+    mv /tmp/changed_$(basename $source_file) $source_file
   else
     echo "Update failed: Already modified."
   fi
+  
+  $command
 }
 
 parrot(){
