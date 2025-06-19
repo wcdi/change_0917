@@ -35,19 +35,19 @@ fi
 check() {
   # Detect source_file
   if ! mysudo test -e $srcpath ; then
-    echo "$srcpath is not found"
+    echo "$srcpath is not found"  >&2
     exit 1
   fi
 
   # Detect $URL domain from $source_file 
   if mysudo grep $URL $srcpath >/dev/null 2>&1 ; then
-    echo "Already changed: Detected “$URL” domain in $srcpath"
+    echo "Already changed: Detected “$URL” domain in $srcpath"  >&2
     exit 1
   fi
 
   if mysudo test -e $bkpath ; then
     # backup exists
-    echo "Backup failed: $bkpath is already."
+    echo "Backup failed: $bkpath is already."  >&2
     exit 1  
   fi
 }
@@ -159,7 +159,7 @@ if [ -f /etc/os-release ]; then
       fi
       ;;
     *)
-      echo "This distribution is not supported."
+      echo "This distribution is not supported."  >&2
       exit 1
       ;;
   esac
@@ -193,6 +193,6 @@ if test -z $i ; then
   echo "The script has finished successfully."
   exit 0
 else 
-  echo 'abort.'
+  echo 'abort.' >&2
   exit 1
 fi 
