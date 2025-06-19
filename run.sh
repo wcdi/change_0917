@@ -87,6 +87,18 @@ openwrt() {
   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $tmppath
 }
 
+commit() {
+  # create backup
+  mysudo cp $srcpath $bkpath
+
+  # changing sources files
+  mysudo rm $srcpath
+  mysudo cp $tmppath $srcpath
+
+  # update package cache
+  mysudo $pkgmgr
+}
+
 # domain
 URL="mirror.hashy0917.net"
 # command
@@ -198,13 +210,7 @@ else
 fi
 
 if test -z $i ; then
-  # make backup
-  mysudo cp $srcpath $bkpath
-
-  # update command
-  mysudo rm $srcpath
-  mysudo cp $tmppath $srcpath
-  mysudo $pkgmgr
+  commit
 
   echo "The script has finished successfully."
   exit 0
