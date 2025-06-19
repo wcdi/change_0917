@@ -70,7 +70,7 @@ check() {
 }
 
 arch() {
-  sed -i '1i server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $tmppath
+  sed -i '1i Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $tmppath
 }
 
 simple() {
