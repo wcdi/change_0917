@@ -95,6 +95,6 @@ read _
 mysudo cp $srcpath $bkpath
 
 # update command
-rm $srcpath
-cp $tmpfile $srcpath
+mysudo rm $srcpath
+mysudo cp $tmpfile $srcpath
 mysudo $pkgmgr
