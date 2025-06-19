@@ -200,16 +200,18 @@ check
 mysudo cat $srcpath > $tmppath
 eval "$churl"
 
-# show diff
+confirm=""
+
+# check -y args
 if test $yes -eq 1 ; then
+  # show diff
   mydiff
   echo 'Apply the changes? [confirm]'
-  read i
-else
-  i=""
+  read confirm
 fi
 
-if test -z $i ; then
+if test -z $confirm ; then
+  # file changed
   commit
 
   echo "The script has finished successfully."
