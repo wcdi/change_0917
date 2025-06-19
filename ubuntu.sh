@@ -59,6 +59,8 @@ echo 'Apply the changes? [confirm]'
 read
 
 # update command
+rm $source_file
+cp $tmp_file $source_file
 $sudo $pkgmgr
 
 checkfiles() {
