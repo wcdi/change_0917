@@ -1,4 +1,4 @@
-name: Tests
+name: Testing Archlinux
 
 on:
   pull_request:
@@ -12,5 +12,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: arch
+      - name: testing
         run: docker build -f ./tests/arch/dockerfile .

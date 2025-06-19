@@ -1,4 +1,4 @@
-name: Tests
+name: Testing Ubuntu 24.04
 
 on:
   pull_request:
@@ -12,5 +12,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: ubuntu24.04
+      - name: testing
         run: docker build -f ./tests/ubuntu_2404/dockerfile .

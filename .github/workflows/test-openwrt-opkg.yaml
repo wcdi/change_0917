@@ -1,4 +1,4 @@
-name: Tests
+name: Testing openwrt(opkg)
 
 on:
   pull_request:
@@ -12,5 +12,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: openwrt_opkg
+      - name: testing
         run: docker build -f ./tests/openwrt_opkg/dockerfile .
