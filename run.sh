@@ -32,7 +32,7 @@ else
 fi
 
 
-chkfs() {
+check() {
   # Detect source_file
   if ! mysudo test -e $srcpath ; then
     echo "$srcpath is not found"
@@ -166,7 +166,7 @@ if [ -f /etc/os-release ]; then
 fi
 
 # check files
-chkfs
+check
 
 # change repository
 mysudo cat $srcpath > $tmpfile
@@ -189,6 +189,10 @@ if test -z $i ; then
   mysudo rm $srcpath
   mysudo cp $tmpfile $srcpath
   mysudo $pkgmgr
+
+  echo "The script has finished successfully."
+  exit 0
 else 
   echo 'abort.'
+  exit 1
 fi 
