@@ -67,9 +67,12 @@ openwrt(){
 
   # URLを変更し、ファイルを書き換える
   if awk '{ 
-      # 行にURLがあり、そのドメインがmirror.hashy0917.netでなければ変更する
-      if ($0~/ht.*\/\/[A-Za-z0-9.]*\// && $0!~/mirror.hashy0917.net/){ 
-        sub(/ht.*\/\/[A-Za-z0-9.]*\//, "http://mirror.hashy0917.net/openwrt/");
+      # URLがある行を変更する
+      if ($0~/ht.*\/\/[A-Za-z0-9.]*\//){ 
+        # snapshots or releasesでURLを特定する
+        if (sub(/ht.*\/\/[A-Za-z0-9.]*\/.*snapshots/, "http://mirror.hashy0917.net/openwrt/snapshots") == 0) {
+          sub(/ht.*\/\/[A-Za-z0-9.]*\/.*releases/, "http://mirror.hashy0917.net/openwrt/releases")
+        }
         res=1 
       } 
       print $0
