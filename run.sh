@@ -21,6 +21,7 @@ while getopts "ynhd" opt; do
       echo "Options:" >&2
       echo "  -y : Skip confirmation (dockerfile recommended)" >&2
       echo "  -n : Skip package manager updates" >&2
+      echo "  -d : Dry run" >&2
       exit 1
     ;;
     *)
