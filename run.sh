@@ -238,7 +238,7 @@ if test $confirm -eq 1 ; then
   # show diff
   mydiff
   echo 'Apply the changes? [confirm]'
-  read input
+  read input < /dev/tty
 fi
 
 if test -z $input ; then
