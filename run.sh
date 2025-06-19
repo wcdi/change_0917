@@ -4,13 +4,17 @@ set -eu
 # args
 confirm=1
 pkgupd=1
-while getopts "ynh" opt; do
+dryrun=0
+while getopts "ynhd" opt; do
   case "$opt" in
     "y")
       confirm=0
     ;;
     "n")
       pkgupd=0
+    ;;
+    "d")
+      dryrun=1
     ;;
     "h")
       echo "Usage: $0 [-yn]" >&2
@@ -214,6 +218,11 @@ check
 # change repository
 mysudo cat $srcpath > $tmppath
 eval "$churl"
+
+# dry run
+if test $dryrun -eq 1 ; then
+  mydiff
+fi
 
 input=""
 
