@@ -52,6 +52,10 @@ chkfs() {
   fi
 }
 
+arch() {
+  sed -i '1i server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $tmpfile
+}
+
 simple() {
   sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmpfile
 }
@@ -65,7 +69,7 @@ parrot() {
 # domain
 URL="mirror.hashy0917.net"
 # command
-diff=$(if ! command -v diff 2>/dev/null ; then print 'cat'; fi)
+diff=$(if ! command -v diff 2>/dev/null ; then printf 'cat'; fi)
 pkgmgr=""
 churl=""
 # repo_list
@@ -80,6 +84,12 @@ trap 'rm -f "$tmpfile"' EXIT
 if [ -f /etc/os-release ]; then
   . /etc/os-release
   case "$ID" in
+    arch)
+      srcpath="/etc/pacman.d/mirrorlist"
+      bkpath="$srcpath.bk"
+      pkgmgr='echo "Please add -y option when running pacman next time. (for example: pacman -Syu)"'
+      churl="arch"
+    ;;
     debian)
       pkgmgr="apt-get update"
       case "$NAME" in
