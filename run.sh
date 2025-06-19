@@ -5,7 +5,7 @@ set -eu
 confirm=1
 pkgupd=1
 while getopts "ynh" opt; do
-  case "$1" in
+  case "$opt" in
     "y")
       confirm=0
     ;;
