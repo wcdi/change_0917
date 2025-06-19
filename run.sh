@@ -99,6 +99,10 @@ commit() {
   mysudo $pkgmgr
 }
 
+#########################################################################
+
+# set default variables.
+
 # domain
 URL="mirror.hashy0917.net"
 # command
