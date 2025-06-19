@@ -60,7 +60,19 @@ trap 'rm -f "$tmpfile"' EXIT
 if [ -f /etc/os-release ]; then
   . /etc/os-release
   case "$ID" in
-     ubuntu)
+    debian)
+      srcpath="/etc/apt/sources.list.d/debian.sources"
+      bkpath="/etc/apt/debian.sources.bk"
+      pkgmgr="apt-get update"
+      churl="simple"
+
+      if ! mysudo test -e $srcpath ; then
+        # before 24.04
+        srcpath="/etc/apt/sources.list"
+        bkpath="/etc/apt/sources.list.bk"
+      fi
+      ;;
+    ubuntu)
       srcpath="/etc/apt/sources.list.d/ubuntu.sources"
       bkpath="/etc/apt/ubuntu.sources.bk"
       pkgmgr="apt-get update"
