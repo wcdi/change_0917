@@ -14,8 +14,7 @@ if test $# -ge 1 ; then
   esac
 fi
 
-
-# Detect sudo
+# Allow execution from general users in environments where sudo is available.
 if test $(id -u) -eq 0 ; then
   mysudo() {
     eval "$@"
@@ -25,10 +24,28 @@ else
     mysudo() {
       eval "sudo $@"
     }
+  elif command -v doas >/dev/null 2>&1; then
+    mysudo() {
+      eval "doas $@"
+    }
   else
     echo "This script must be run as root or have sudo available." >&2
     exit 1
   fi
+fi
+
+# File diffs independent of environment
+if command -v diff >/dev/null 2>&1; then
+  mydiff() {
+    eval "diff $srcpath $tmppath" || true
+  }
+else
+  mydiff() {
+    echo "<<< old"
+    mysudo grep -E 'ht.*//[A-Za-z0-9.]*/' $srcpath || true
+    echo ">>> new"
+    grep -E 'ht.*//[A-Za-z0-9.]*/' $tmppath || true
+  }
 fi
 
 
@@ -73,7 +90,6 @@ openwrt() {
 # domain
 URL="mirror.hashy0917.net"
 # command
-diff=$(if ! command -v diff 2>/dev/null ; then printf 'cat'; fi)
 pkgmgr=""
 churl=""
 # repo_list
@@ -174,7 +190,7 @@ eval "$churl"
 
 # show diff
 if test $yes -eq 1 ; then
-  mysudo $diff $srcpath $tmppath || true
+  mydiff
   echo 'Apply the changes? [confirm]'
   read i
 else
