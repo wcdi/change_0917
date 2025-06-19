@@ -2,18 +2,18 @@
 set -eu
 
 # args
+yes=1
 if test $? -ge 1 ; then
   case "$1" in
     "-y")
-      read() {
-        :
-      }
+     yes=0
     ;;
     *)
       :
     ;;
   esac
 fi
+
 
 # Detect sudo
 if test $(id -u) -eq 0 ; then
@@ -113,12 +113,11 @@ mysudo cat $srcpath > $tmpfile
 eval "$churl"
 
 # show diff
-i=""
 mysudo $diff $srcpath $tmpfile || true
 echo 'Apply the changes? [confirm]'
 read i
 
-if test -z $i ; then
+if test -z $i || test $yes -eq 0 ; then
   # make backup
   mysudo cp $srcpath $bkpath
 
