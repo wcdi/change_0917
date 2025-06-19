@@ -1,0 +1,16 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: ["**"]
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: parrot
+        run: docker build -f ./tests/parrot/dockerfile .

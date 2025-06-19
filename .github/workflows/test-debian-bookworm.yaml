@@ -1,0 +1,16 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: ["**"]
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: debian_bookworm
+        run: docker build -f ./tests/debian_bookworm/dockerfile .
