@@ -111,6 +111,11 @@ arch() {
 }
 
 simple() {
+  pushd $tmppath
+    for srcfile in $srcfiles; do
+      sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $srcfile
+    done
+  popd
 
   # sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
 }
