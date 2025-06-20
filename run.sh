@@ -6,7 +6,7 @@ confirm=1
 pkgupd=1
 dryrun=0
 force=1
-while getopts "ynhd" opt; do
+while getopts "ynhds" opt; do
   case "$opt" in
     "h")
       echo Change the mirror server to mirror.hashy0917.net >&2
@@ -16,6 +16,7 @@ while getopts "ynhd" opt; do
       echo "  -y : Skip confirmation (dockerfile recommended)" >&2
       echo "  -n : Skip package manager updates" >&2
       echo "  -d : Dry run" >&2
+      echo "  -s : struct mode" >&2
       exit 1
     ;;
     "y")
@@ -26,6 +27,9 @@ while getopts "ynhd" opt; do
     ;;
     "d")
       dryrun=1
+    ;;
+    "s")
+      force=0
     ;;
     *)
       :
