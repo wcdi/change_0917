@@ -1,0 +1,13 @@
+FROM --platform=linux/amd64 ubuntu:22.04
+COPY run.sh /
+
+# 変更されていた場合に処理が終了するようにする
+
+## 準備
+### 擬似バックアップファイルの作成と、エラー文再現をする
+RUN sh /run.sh -yn
+RUN rm /etc/apt/sources.list.bk
+
+## 検証
+### エラーメッセージが一致したら成功
+RUN test "$(sh /run.sh -yn 2>&1)" = "Already changed: Detected “mirror.hashy0917.net” domain in sources.list"

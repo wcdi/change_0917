@@ -1,6 +1,7 @@
 FROM --platform=linux/amd64 ubuntu:22.04
-
 COPY run.sh /
 
-# 実行
+# 全ての処理が正常に成功する。
+
+## 検証
 RUN sh /run.sh -y
