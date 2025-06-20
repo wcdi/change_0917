@@ -87,8 +87,8 @@ check() {
     fi
   done
 
-  for bkfile in $bkfiles; do
-    bkfulpath="$bkpath/$bkfile"
+  for srcfile in $srcfiles; do
+    bkfulpath="$bkpath/$srcfile.bk"
     if mysudo test -e $bkfulpath ; then
       # backup exists
       echo "Backup failed: $bkfulpath is already."  >&2
@@ -99,6 +99,7 @@ check() {
 
 commit() {
   # create backup
+  for 
   mysudo cp $srcpath $bkpath
 
   # changing sources files
@@ -147,7 +148,6 @@ churl=""
 srcpath=""
 srcfiles=""
 bkpath=""
-bkfiles=""
 # tmp
 tmppath=$(mktemp -d)
 difold="$tmppath/old"
@@ -230,7 +230,6 @@ if [ -f /etc/os-release ]; then
         srcfiles="sources.list"
         bkpath="/etc/apt/sources.list.bk"
       fi
-      bkfiles="$srcfiles.bk"
       ;;
     *)
       echo "This distribution is not supported."  >&2
