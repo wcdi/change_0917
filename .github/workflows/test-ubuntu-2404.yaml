@@ -1,4 +1,4 @@
-name: Testing Ubuntu 22.04
+name: Testing Ubuntu 24.04
 
 on:
   pull_request:
