@@ -2,7 +2,7 @@
 set -eu
 
 AUTHER="wcdi"
-VERSION="0.0.0"
+SCRIPTVERSION="0.0.0"
 REPOURL="https://github.com/wcdi/change_0917"
 
 # args
@@ -36,7 +36,7 @@ while getopts "ynhdsv" opt; do
       force=0
     ;;
     "v")
-      echo "version: $VERSION"
+      echo "version: $SCRIPTVERSION"
       echo "git url: $REPOURL"
       exit 0
     ;;
@@ -103,7 +103,7 @@ check() {
     echo "If any paths have changed, feel free to file an issue." >&2
     echo "" >&2
     echo "Distribution: $PRETTY_NAME" >&2
-    echo "Programs Version: $VERSION" >&2
+    echo "Scripts Version: $SCRIPTVERSION" >&2
     echo "url: $REPOURL" >&2
     exit 1
   fi
