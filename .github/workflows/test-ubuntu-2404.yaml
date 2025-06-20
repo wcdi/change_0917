@@ -1,4 +1,4 @@
-name: Testing Ubuntu 24.04
+name: Testing Ubuntu 22.04
 
 on:
   pull_request:
@@ -12,5 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: testing
-        run: docker build -f ./tests/ubuntu_2404/dockerfile .
+      - name: check_backup_test
+        run: docker build --no-cache --rm -f ./tests/ubuntu_2404/check_backup .
+      - name: check_already_changed
+        run: docker build --no-cache --rm -f ./tests/ubuntu_2404/check_already_changed .
+      - name: check_source_list_nonexistent
+        run: docker build --no-cache --rm -f ./tests/ubuntu_2404/check_filenotfound .
+      - name: check_apt_update
+        run: docker build --no-cache --rm -f ./tests/ubuntu_2404/check_apt_update .

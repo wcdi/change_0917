@@ -1,0 +1,12 @@
+FROM --platform=linux/amd64 ubuntu:24.04
+COPY run.sh /
+
+# sources.listがない場合に処理が終了することを確認する
+
+## 準備
+### 擬似バックアップファイルの作成と、エラー文再現をする
+RUN rm /etc/apt/sources.list.d/ubuntu.sources
+
+## 検証
+### エラーメッセージが一致したら成功
+RUN test "$(sh /run.sh -yn 2>&1)" = "sources.list.d/ubuntu.sources is not found"
