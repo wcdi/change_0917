@@ -3,7 +3,7 @@ set -eu
 
 AUTHER="wcdi"
 VERSION="0.0.0"
-URL="https://github.com/wcdi/change_0917"
+REPOURL="https://github.com/wcdi/change_0917"
 
 # args
 confirm=1
@@ -37,7 +37,7 @@ while getopts "ynhdsv" opt; do
     ;;
     "v")
       echo "version: $VERSION"
-      echo "git url: $URL"
+      echo "git url: $REPOURL"
       exit 0
     ;;
     *)
@@ -104,7 +104,7 @@ check() {
     echo "" >&2
     echo "Distribution: $PRETTY_NAME" >&2
     echo "Programs Version: $VERSION" >&2
-    echo "url: $URL" >&2
+    echo "url: $REPOURL" >&2
     exit 1
   fi
   srcfiles=$newsrcfiles
