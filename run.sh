@@ -137,7 +137,11 @@ commit() {
 }
 
 arch() {
-  sed -i '1i Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $tmppath
+  cd $tmppath
+    for srcfile in $srcfiles; do
+      sed -i '1i Server = https://mirror.hashy0917.net/archlinux/$repo/os/$arch' $srcfile
+    done
+  cd - > /dev/null
 }
 
 simple() {
@@ -146,8 +150,6 @@ simple() {
       sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $srcfile
     done
   cd - > /dev/null
-
-  # sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
 }
 
 parrot() {
@@ -189,8 +191,9 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
   case "$ID" in
     arch)
-      srcpath="/etc/pacman.d/mirrorlist"
-      bkpath="$srcpath.bk"
+      srcpath="/etc/pacman.d"
+      srcfiles="mirrorlist"
+      bkpath=$srcpath
       pkgmgr='echo "Please add -y option when running pacman next time. (for example: pacman -Syu)"'
       churl="arch"
     ;;
