@@ -77,13 +77,11 @@ check() {
   # Detect source_file
   for srcfile in $srcfiles; do
     srcfulpath="$srcpath/$srcfile"
-    if ! mysudo test -e "$srcfulpath" ; then
-      if test $force -eq 0 ; then
-        echo "$srcfile is not found"  >&2
-        exit 1
-      fi
-    else
+    if mysudo test -e "$srcfulpath" && mysudo grep 'ht.*//[A-Za-z0-9.]*/' $srcfulpath ; then
       newsrcfiles="$newsrcfiles $srcfile"
+    elif test $force -eq 0 ; then
+      echo "$srcfile is not found"  >&2
+      exit 1
     fi
   done
   srcfiles=$newsrcfiles
@@ -92,6 +90,7 @@ check() {
   # Detect source_file
   for srcfile in $srcfiles; do
     srcfulpath="$srcpath/$srcfile"
+      grep 'ht.*//[A-Za-z0-9.]*/'
     if mysudo grep $URL $srcfulpath >/dev/null 2>&1 ; then
       echo "Already changed: Detected “$URL” domain in $srcfile"  >&2
       exit 1
