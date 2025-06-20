@@ -56,14 +56,14 @@ fi
 # File diffs independent of environment
 if command -v diff >/dev/null 2>&1; then
   mydiff() {
-    eval "diff $srcpath $tmppath" || true
+    eval "diff $difold $difnew" || true
   }
 else
   mydiff() {
     echo "<<< old"
-    mysudo grep -E 'ht.*//[A-Za-z0-9.]*/' $srcpath || true
+    mysudo grep -E 'ht.*//[A-Za-z0-9.]*/' $difold || true
     echo ">>> new"
-    grep -E 'ht.*//[A-Za-z0-9.]*/' $tmppath || true
+    grep -E 'ht.*//[A-Za-z0-9.]*/' $difnew || true
   }
 fi
 
@@ -111,7 +111,8 @@ arch() {
 }
 
 simple() {
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
+
+  # sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
 }
 
 parrot() {
@@ -240,13 +241,27 @@ fi
 check
 
 # change repository
-#mysudo cat $srcpath > $tmppath
 
 # movefile 
 for srcfile in $srcfiles; do
   mysudo cat "$srcpath/$srcfile" > "$tmppath/$srcfile"
 done
+
+# set old
+if test $usediff -eq 1 ; then
+  pushd $tmppath
+    cat $srcfiles > $difold
+  popd
+fi
+
 eval "$churl"
+
+# set new
+if test $usediff -eq 1 ; then
+  pushd $tmppath
+    cat $srcfiles > $difnew
+  popd
+fi
 
 # dry run
 if test $dryrun -eq 1 ; then
