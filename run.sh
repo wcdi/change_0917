@@ -105,10 +105,9 @@ transaction() {
 
   # create difold
   if test $usediff -eq 1 ; then
-    echo $tmppath
     cd $tmppath
       cat $srcfiles > $difold
-    cd -
+    cd - > /dev/null
   fi
 
   # changes url
@@ -118,7 +117,7 @@ transaction() {
   if test $usediff -eq 1 ; then
     cd $tmppath
       cat $srcfiles > $difnew
-    cd -
+    cd - > /dev/null
   fi
 }
 
@@ -146,7 +145,7 @@ simple() {
     for srcfile in $srcfiles; do
       sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $srcfile
     done
-  cd -
+  cd - > /dev/null
 
   # sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
 }
