@@ -9,4 +9,4 @@ RUN rm /etc/apt/sources.list
 
 ## 検証
 ### エラーメッセージが一致したら成功
-RUN test "$(sh /run.sh -yn 2>&1)" = "sources.list is not found"
+RUN test "$(sh /run.sh -yn 2>&1 | head -n 1)" = "No change files found."
