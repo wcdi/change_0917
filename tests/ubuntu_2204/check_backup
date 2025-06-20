@@ -5,7 +5,7 @@ COPY run.sh /
 
 ## 準備
 ### 擬似バックアップファイルの作成と、エラー文再現をする
-RUN touch /etc/apt/sources.list.bk
+RUN mkdir -p /etc/apt/backup && touch /etc/apt/backup/sources.list.bk
 
 ## 検証
 ### エラーメッセージが一致したら成功
