@@ -230,7 +230,12 @@ fi
 check
 
 # change repository
-mysudo cat $srcpath > $tmppath
+#mysudo cat $srcpath > $tmppath
+
+# movefile 
+for srcfile in $srcfiles; do
+  mysudo cat "$srcpath/$srcfile" > "$tmppath/$srcfile"
+done
 eval "$churl"
 
 # dry run
