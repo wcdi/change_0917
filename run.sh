@@ -129,7 +129,9 @@ pkgmgr=""
 churl=""
 # repo_list
 srcpath=""
+srcfiles=""
 bkpath=""
+bkfiles=""
 # tmp
 tmppath=$(mktemp -d)
 difold="$tmppath/old"
@@ -200,16 +202,19 @@ if [ -f /etc/os-release ]; then
       fi 
       ;;
     ubuntu)
-      srcpath="/etc/apt/sources.list.d/ubuntu.sources"
-      bkpath="/etc/apt/ubuntu.sources.bk"
+      srcpath="/etc/apt/sources.list.d"
+      srcfiles="ubuntu.sources"
+      bkpath="/etc/apt"
       pkgmgr="apt-get update"
       churl="simple"
 
       if ! mysudo test -e $srcpath ; then
         # before 24.04
-        srcpath="/etc/apt/sources.list"
+        srcpath="/etc/apt"
+        srcfiles="sources.list"
         bkpath="/etc/apt/sources.list.bk"
       fi
+      bkfiles="$srcfiles.bk"
       ;;
     *)
       echo "This distribution is not supported."  >&2
