@@ -152,7 +152,7 @@ bkfiles=""
 tmppath=$(mktemp -d)
 difold="$tmppath/old"
 difnew="$tmppath/new"
-trap 'rm -f "$tmppath"' EXIT INT TERM
+trap 'rm -rf "$tmppath"' EXIT INT TERM
 
 
 # Set variables for each Distribution
