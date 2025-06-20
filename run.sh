@@ -265,7 +265,7 @@ if [ -f /etc/os-release ]; then
       ;;
     ubuntu)
       srcpath="/etc/apt"
-      srcfiles="sources.list.d/ubuntu.sources sources.list.d/test.hogehoge"
+      srcfiles="sources.list.d/ubuntu.sources"
       bkpath="/etc/apt/backup"
       pkgmgr="apt-get update"
       churl="simple"
