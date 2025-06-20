@@ -100,6 +100,7 @@ check() {
 transaction() {
   # move srcfile to tmp
   for srcfile in $srcfiles; do
+    mkdir -p $(dirname "$tmppath/$srcfile")
     mysudo cat "$srcpath/$srcfile" > "$tmppath/$srcfile"
   done
 
@@ -128,6 +129,7 @@ commit() {
     srcfulpath="$srcpath/$srcfile"
     bkfulpath="$bkpath/$srcfile.bk"
 
+    mysudo mkdir -p $(dirname $bkfulpath)
     mysudo cp $srcfulpath $bkfulpath
 
     # changing sources files
