@@ -85,6 +85,11 @@ check() {
       exit 1
     fi
   done
+  # newsrcfiles is empty, exit with error message
+  if test -z $newsrcfiles ; then
+    echo "Nothing to files."  >&2
+    exit 1
+  fi
   srcfiles=$newsrcfiles
 
   # Detect $URL domain from $source_file 
