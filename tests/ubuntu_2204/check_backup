@@ -1,0 +1,13 @@
+FROM --platform=linux/amd64 ubuntu:22.04
+COPY run.sh /
+
+# バックアップがある場合に処理が終了することを確認する
+
+## 準備
+### 擬似バックアップファイルの作成と、エラー文再現をする
+ENV msg="Backup failed: /etc/apt/sources.list.bk is already."
+RUN touch /etc/apt/sources.list.bk
+
+## 検証
+### エラーメッセージが一致したら成功
+RUN test "$(sh /run.sh 2>&1)" = "Backup failed: /etc/apt/sources.list.bk is already."
