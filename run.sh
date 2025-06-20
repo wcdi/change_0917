@@ -31,6 +31,7 @@ while getopts "ynhd" opt; do
     ;;
   esac
 done
+usediff=$confirm
 
 # Allow execution from general users in environments where sudo is available.
 if test $(id -u) -eq 0 ; then
@@ -130,7 +131,9 @@ churl=""
 srcpath=""
 bkpath=""
 # tmp
-tmppath=$(mktemp)
+tmppath=$(mktemp -d)
+difold="$tmppath/old"
+difnew="$tmppath/new"
 trap 'rm -f "$tmppath"' EXIT INT TERM
 
 
