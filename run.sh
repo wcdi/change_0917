@@ -217,6 +217,7 @@ if [ -f /etc/os-release ]; then
       bkpath=$srcpath
       pkgmgr='echo "Please add -y option when running pacman next time. (for example: pacman -Syu)"'
       churl="arch"
+      force=0
     ;;
     debian)
       pkgmgr="apt-get update"
