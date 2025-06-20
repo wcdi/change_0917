@@ -89,11 +89,12 @@ check() {
 
   for bkfile in $bkfiles; do
     bkfulpath="$bkpath/$bkfile"
-  if mysudo test -e $bkfulpath ; then
-    # backup exists
-    echo "Backup failed: $bkfulpath is already."  >&2
-    exit 1  
-  fi
+    if mysudo test -e $bkfulpath ; then
+      # backup exists
+      echo "Backup failed: $bkfulpath is already."  >&2
+      exit 1  
+    fi
+  done
 }
 
 commit() {
