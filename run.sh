@@ -96,7 +96,15 @@ check() {
   done
   # newsrcfiles is empty, exit with error message
   if test -z $newsrcfiles ; then
-    echo "Nothing to files."  >&2
+    echo "No change files found." >&2
+    echo "" >&2
+    echo "Hint: the program looked for the following files: $srcfiles" >&2
+    echo "Please check your package manager's repository source files." >&2
+    echo "If any paths have changed, feel free to file an issue." >&2
+    echo "" >&2
+    echo "Distribution: $PRETTY_NAME" >&2
+    echo "Programs Version: $VERSION" >&2
+    echo "url: $URL" >&2
     exit 1
   fi
   srcfiles=$newsrcfiles
