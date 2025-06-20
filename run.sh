@@ -78,7 +78,7 @@ check() {
   for srcfile in $srcfiles; do
     srcfulpath="$srcpath/$srcfile"
     # Check if file exists and contains URLs
-    if mysudo test -e "$srcfulpath" && mysudo grep 'ht.*//[A-Za-z0-9.]*/' $srcfulpath ; then
+    if mysudo test -e "$srcfulpath" && mysudo grep 'ht.*//[A-Za-z0-9.]*/' >/dev/null 2>&1 $srcfulpath ; then
       newsrcfiles="$newsrcfiles $srcfile"
     elif test $force -eq 0 ; then
       echo "$srcfile is not found"  >&2

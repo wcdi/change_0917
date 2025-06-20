@@ -9,4 +9,4 @@ RUN touch /etc/apt/sources.list.bk
 
 ## 検証
 ### エラーメッセージが一致したら成功
-RUN test "$(sh /run.sh -yn 2>&1)" = "Backup failed: /etc/apt/sources.list.bk is already."
+RUN test "$(sh /run.sh -yn 2>&1)" = "Backup failed: /etc/apt/backup/sources.list.bk is already."
