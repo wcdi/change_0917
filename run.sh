@@ -275,16 +275,10 @@ if [ -f /etc/os-release ]; then
       ;;
     ubuntu)
       srcpath="/etc/apt"
-      srcfiles="sources.list.d/ubuntu.sources"
+      srcfiles="sources.list.d/ubuntu.sources sources.list"
       bkpath="/etc/apt/backup"
       pkgmgr="apt-get update"
       churl="simple"
-
-      if ! mysudo test -e "$srcpath/$srcfiles" ; then
-        # before 24.04
-        srcfiles="sources.list"
-        bkpath="/etc/apt"
-      fi
       ;;
     *)
       echo "This distribution is not supported."  >&2
