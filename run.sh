@@ -73,14 +73,20 @@ else
 fi
 
 check() {
+  newsrcfiles=""
   # Detect source_file
   for srcfile in $srcfiles; do
     srcfulpath="$srcpath/$srcfile"
     if ! mysudo test -e "$srcfulpath" ; then
-      echo "$srcfile is not found"  >&2
-      exit 1
+      if test $force -eq 0 ; then
+        echo "$srcfile is not found"  >&2
+        exit 1
+      fi
+    else
+      newsrcfiles="$newsrcfiles $srcfile"
     fi
   done
+  srcfiles=$newsrcfiles
 
   # Detect $URL domain from $source_file 
   # Detect source_file
