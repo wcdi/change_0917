@@ -177,11 +177,15 @@ parrot() {
 }
 
 openwrt() {
-  if grep -E 'ht.*//[A-Za-z0-9.]*/openwrt/' >/dev/null 2>&1 $tmppath ; then
-    sed -i 's-ht.*//[A-Za-z0-9.]*/openwrt/-http://mirror.hashy0917.net/openwrt/-' $tmppath
-  else
-    sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $tmppath
-  fi
+  cd $tmppath
+    for srcfile in $srcfiles; do
+      if grep -E 'ht.*//[A-Za-z0-9.]*/openwrt/' >/dev/null 2>&1 $srcfile ; then
+        sed -i 's-ht.*//[A-Za-z0-9.]*/openwrt/-http://mirror.hashy0917.net/openwrt/-' $srcfile
+      else
+        sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $srcfile
+      fi
+    done
+  cd - > /dev/null
 }
 
 #########################################################################
@@ -256,15 +260,17 @@ if [ -f /etc/os-release ]; then
       fi
       ;;
     openwrt)
-      srcpath="/etc/opkg/distfeeds.conf"
-      bkpath="$srcpath.bk"
+      srcpath="/etc/opkg"
+      srcfiles="distfeeds.conf"
+      bkpath=$srcpath
       pkgmgr="opkg update"
       churl="openwrt"
 
       if [ -d /etc/apk ]; then
         # Detect apk-based OpenWrt 
-        srcpath="/etc/apk/repositories.d/distfeeds.list"
-        bkpath="$srcpath.bk"
+        srcpath="/etc/apk/repositories.d"
+        srcfiles="distfeeds.list"
+        bkpath=$srcpath
         pkgmgr="apk update"
       fi 
       ;;
