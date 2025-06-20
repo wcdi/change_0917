@@ -111,11 +111,11 @@ arch() {
 }
 
 simple() {
-  pushd $tmppath
+  cd $tmppath
     for srcfile in $srcfiles; do
       sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $srcfile
     done
-  popd
+  cd -
 
   # sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
 }
@@ -254,18 +254,19 @@ done
 
 # set old
 if test $usediff -eq 1 ; then
-  pushd $tmppath
+  echo $tmppath
+  cd $tmppath
     cat $srcfiles > $difold
-  popd
+  cd -
 fi
 
 eval "$churl"
 
 # set new
 if test $usediff -eq 1 ; then
-  pushd $tmppath
+  cd $tmppath
     cat $srcfiles > $difnew
-  popd
+  cd -
 fi
 
 # dry run
