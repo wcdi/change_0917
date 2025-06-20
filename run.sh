@@ -99,12 +99,17 @@ check() {
 
 commit() {
   # create backup
-  for 
-  mysudo cp $srcpath $bkpath
+  for srcfile in $srcfiles; do
+    tmpfulpath="$tmppath/$srcfile"
+    srcfulpath="$srcpath/$srcfile"
+    bkfulpath="$bkpath/$srcfile.bk"
 
-  # changing sources files
-  mysudo rm $srcpath
-  mysudo cp $tmppath $srcpath
+    mysudo cp $srcfulpath $bkfulpath
+
+    # changing sources files
+    mysudo rm $srcfulpath
+    mysudo cp $tmpfulpath $srcfulpath
+  done
 }
 
 arch() {
