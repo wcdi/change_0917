@@ -243,13 +243,13 @@ if [ -f /etc/os-release ]; then
       esac
       ;;
     kali)
-      srcpath="/etc/apt/sources.list.d"
-      srcfiles="kali.sources"
+      srcpath="/etc/apt"
+      srcfiles="sources.list.d/kali.sources"
       bkpath="/etc/apt/backup"
       pkgmgr="apt-get update"
       churl="simple"
 
-      if ! mysudo test -e "$srcpath" ; then
+      if ! mysudo test -e "$srcpath/$srcfiles" ; then
         # before 24.04
         srcfiles="sources.list"
         bkpath="/etc/apt"
