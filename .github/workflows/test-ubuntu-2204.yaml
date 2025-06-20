@@ -13,10 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: check_backup_test
-        run: docker build -f ./tests/ubuntu_2204/check_backup .
+        run: docker build --no-cache --rm -f ./tests/ubuntu_2204/check_backup .
       - name: check_already_changed
-        run: docker build -f ./tests/ubuntu_2204/check_already_changed .
+        run: docker build --no-cache --rm -f ./tests/ubuntu_2204/check_already_changed .
       - name: check_source_list_nonexistent
-        run: docker build -f ./tests/ubuntu_2204/check_filenotfound .
+        run: docker build --no-cache --rm -f ./tests/ubuntu_2204/check_filenotfound .
       - name: check_apt_update
-        run: docker build -f ./tests/ubuntu_2204/check_apt_update .
+        run: docker build --no-cache --rm -f ./tests/ubuntu_2204/check_apt_update .
