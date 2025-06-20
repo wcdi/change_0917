@@ -5,18 +5,17 @@ set -eu
 confirm=1
 pkgupd=1
 dryrun=0
-force=0
-while getopts "ynhdf" opt; do
+force=1
+while getopts "ynhd" opt; do
   case "$opt" in
     "h")
-      echo Change the mirror server to mirror.hashy0917.net
-      echo
+      echo Change the mirror server to mirror.hashy0917.net >&2
+      echo >&2
       echo "Usage: $0 [-yn]" >&2
       echo "Options:" >&2
       echo "  -y : Skip confirmation (dockerfile recommended)" >&2
       echo "  -n : Skip package manager updates" >&2
       echo "  -d : Dry run" >&2
-      echo "  -f : force"
       exit 1
     ;;
     "y")
@@ -27,9 +26,6 @@ while getopts "ynhdf" opt; do
     ;;
     "d")
       dryrun=1
-    ;;
-    "f")
-      force=1
     ;;
     *)
       :
