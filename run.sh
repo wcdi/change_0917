@@ -87,6 +87,7 @@ check() {
     fi
   done
   srcfiles=$newsrcfiles
+  echo $srcfiles
 
   # Detect $URL domain from $source_file 
   # Detect source_file
@@ -264,7 +265,7 @@ if [ -f /etc/os-release ]; then
       ;;
     ubuntu)
       srcpath="/etc/apt"
-      srcfiles="sources.list.d/ubuntu.sources"
+      srcfiles="sources.list.d/ubuntu.sources sources.list.d/test.hogehoge"
       bkpath="/etc/apt/backup"
       pkgmgr="apt-get update"
       churl="simple"
