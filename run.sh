@@ -252,17 +252,16 @@ if [ -f /etc/os-release ]; then
       fi 
       ;;
     ubuntu)
-      srcpath="/etc/apt/sources.list.d"
-      srcfiles="ubuntu.sources"
-      bkpath="/etc/apt"
+      srcpath="/etc/apt"
+      srcfiles="sources.list.d/ubuntu.sources"
+      bkpath="/etc/apt/backup"
       pkgmgr="apt-get update"
       churl="simple"
 
       if ! mysudo test -e $srcpath ; then
         # before 24.04
-        srcpath="/etc/apt"
         srcfiles="sources.list"
-        bkpath="/etc/apt/sources.list.bk"
+        bkpath="/etc/apt"
       fi
       ;;
     *)
