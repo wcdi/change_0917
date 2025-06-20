@@ -69,20 +69,29 @@ fi
 
 check() {
   # Detect source_file
-  if ! mysudo test -e $srcpath ; then
-    echo "$srcpath is not found"  >&2
-    exit 1
-  fi
+  for srcfile in $srcfiles; do
+    srcfulpath="$srcpath/$srcfile"
+    if ! mysudo test -e "$srcfulpath" ; then
+      echo "$srcfile is not found"  >&2
+      exit 1
+    fi
+  done
 
   # Detect $URL domain from $source_file 
-  if mysudo grep $URL $srcpath >/dev/null 2>&1 ; then
-    echo "Already changed: Detected “$URL” domain in $srcpath"  >&2
-    exit 1
-  fi
+  # Detect source_file
+  for srcfile in $srcfiles; do
+    srcfulpath="$srcpath/$srcfile"
+    if mysudo grep $URL $srcfulpath >/dev/null 2>&1 ; then
+      echo "Already changed: Detected “$URL” domain in $srcfile"  >&2
+      exit 1
+    fi
+  done
 
-  if mysudo test -e $bkpath ; then
+  for bkfile in $bkfiles; do
+    bkfulpath="$bkpath/$bkfile"
+  if mysudo test -e $bkfulpath ; then
     # backup exists
-    echo "Backup failed: $bkpath is already."  >&2
+    echo "Backup failed: $bkfulpath is already."  >&2
     exit 1  
   fi
 }
