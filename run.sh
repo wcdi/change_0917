@@ -167,9 +167,13 @@ simple() {
 }
 
 parrot() {
-  sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $tmppath
-  # (Preserve paths that include 'direct'.)
-  sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $tmppath
+  cd $tmppath
+    for srcfile in $srcfiles; do
+      sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $srcfile
+      # (Preserve paths that include 'direct'.)
+      sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $srcfile
+    done
+  cd - > /dev/null
 }
 
 openwrt() {
@@ -213,26 +217,26 @@ if [ -f /etc/os-release ]; then
     ;;
     debian)
       pkgmgr="apt-get update"
+      srcpath="/etc/apt"
+      bkpath="/etc/apt/backup"
       case "$NAME" in
         "Parrot Security")
-          srcpath="/etc/apt/sources.list.d/parrot.list"
-          bkpath="/etc/apt/parrot.list.bk"
+          srcfiles="sources.list.d/parrot.list"
 
           if ! mysudo test -e $srcpath ; then
             # before 24.04
-            srcpath="/etc/apt/sources.list"
-            bkpath="/etc/apt/sources.list.bk"
+            srcfiles="sources.list"
+            bkpath="/etc/apt"
           fi
           churl="parrot"
           ;;
         *)
-          srcpath="/etc/apt/sources.list.d/debian.sources"
-          bkpath="/etc/apt/debian.sources.bk"
+          srcfiles="sources.list.d/debian.sources"
 
           if ! mysudo test -e $srcpath ; then
             # before 24.04
-            srcpath="/etc/apt/sources.list"
-            bkpath="/etc/apt/sources.list.bk"
+            srcfiles="sources.list"
+            bkpath="/etc/apt"
           fi
           churl="simple"
           ;;
