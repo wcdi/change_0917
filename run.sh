@@ -87,7 +87,6 @@ check() {
     fi
   done
   srcfiles=$newsrcfiles
-  echo $srcfiles
 
   # Detect $URL domain from $source_file 
   # Detect source_file
