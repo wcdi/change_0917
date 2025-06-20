@@ -97,6 +97,31 @@ check() {
   done
 }
 
+transaction() {
+  # move srcfile to tmp
+  for srcfile in $srcfiles; do
+    mysudo cat "$srcpath/$srcfile" > "$tmppath/$srcfile"
+  done
+
+  # create difold
+  if test $usediff -eq 1 ; then
+    echo $tmppath
+    cd $tmppath
+      cat $srcfiles > $difold
+    cd -
+  fi
+
+  # changes url
+  eval "$churl"
+
+  # create difnew
+  if test $usediff -eq 1 ; then
+    cd $tmppath
+      cat $srcfiles > $difnew
+    cd -
+  fi
+}
+
 commit() {
   # create backup
   for srcfile in $srcfiles; do
@@ -250,28 +275,7 @@ fi
 check
 
 # change repository
-
-# movefile 
-for srcfile in $srcfiles; do
-  mysudo cat "$srcpath/$srcfile" > "$tmppath/$srcfile"
-done
-
-# set old
-if test $usediff -eq 1 ; then
-  echo $tmppath
-  cd $tmppath
-    cat $srcfiles > $difold
-  cd -
-fi
-
-eval "$churl"
-
-# set new
-if test $usediff -eq 1 ; then
-  cd $tmppath
-    cat $srcfiles > $difnew
-  cd -
-fi
+transaction
 
 # dry run
 if test $dryrun -eq 1 ; then
