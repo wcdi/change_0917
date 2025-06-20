@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 
+VERSION="0.0.0"
+
 # args
 confirm=1
 pkgupd=1
@@ -30,6 +32,10 @@ while getopts "ynhds" opt; do
     ;;
     "s")
       force=0
+    ;;
+    "v")
+      echo "version: $VERSION"
+      exit 0
     ;;
     *)
       :
