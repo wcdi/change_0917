@@ -1,14 +1,16 @@
 #!/bin/sh
 set -eu
 
+AUTHER="wcdi"
 VERSION="0.0.0"
+URL="https://github.com/wcdi/change_0917"
 
 # args
 confirm=1
 pkgupd=1
 dryrun=0
 force=1
-while getopts "ynhds" opt; do
+while getopts "ynhdsv" opt; do
   case "$opt" in
     "h")
       echo Change the mirror server to mirror.hashy0917.net >&2
@@ -35,6 +37,7 @@ while getopts "ynhds" opt; do
     ;;
     "v")
       echo "version: $VERSION"
+      echo "git url: $URL"
       exit 0
     ;;
     *)
