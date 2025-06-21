@@ -1,0 +1,12 @@
+FROM --platform=linux/amd64 archlinux
+COPY run.sh /
+
+# バックアップがある場合に処理が終了することを確認する
+
+## 準備
+### 擬似バックアップファイルの作成と、エラー文再現をする
+RUN touch /etc/pacman.d/mirrorlist.bk
+
+## 検証
+### エラーメッセージが一致したら成功
+RUN test "$(sh /run.sh -yn 2>&1)" = "Backup failed: /etc/pacman.d/mirrorlist.bk is already."

@@ -1,0 +1,12 @@
+FROM --platform=linux/amd64 openwrt/rootfs:x86_64-24.10.1
+COPY run.sh /
+
+# バックアップがある場合に処理が終了することを確認する
+
+## 準備
+### 擬似バックアップファイルの作成と、エラー文再現をする
+RUN touch /etc/opkg/distfeeds.conf.bk
+
+## 検証
+### エラーメッセージが一致したら成功
+RUN test "$(sh /run.sh -yn 2>&1)" = "Backup failed: /etc/opkg/distfeeds.conf.bk is already."

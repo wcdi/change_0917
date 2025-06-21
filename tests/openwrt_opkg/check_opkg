@@ -1,7 +1,8 @@
 FROM --platform=linux/amd64 openwrt/rootfs:x86_64-24.10.1
-
 COPY run.sh /
 
-# 実行
+# 全ての処理が正常に成功する。
 RUN mkdir /var/lock
+
+## 検証
 RUN sh /run.sh -y
