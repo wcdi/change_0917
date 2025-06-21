@@ -254,7 +254,7 @@ if [ -f /etc/os-release ]; then
     almalinux)
       srcpath="/etc/yum.repos.d"
       srcfiles="almalinux-appstream.repo almalinux-baseos.repo almalinux-crb.repo almalinux-extras.repo almalinux-highavailability.repo almalinux-nfv.repo almalinux-plus.repo almalinux-resilientstorage.repo almalinux-rt.repo almalinux-sap.repo almalinux-saphana.repo"
-      bkpath=$srcpath
+      bkpath="$srcpath/backup"
       pkgmgr='dnf update -y'
       churl="almalinux"
     ;;
