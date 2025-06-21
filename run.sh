@@ -91,6 +91,13 @@ check() {
       newsrcfiles="$newsrcfiles $srcfile"
     elif test $force -eq 0 ; then
       echo "$srcfile is not found"  >&2
+      echo "" >&2
+      echo "Please check your package manager's repository source files." >&2
+      echo "If any paths have changed, feel free to file an issue." >&2
+      echo "" >&2
+      echo "Distribution: $PRETTY_NAME" >&2
+      echo "Scripts Version: $SCRIPTVERSION" >&2
+      echo "url: $REPOURL" >&2
       exit 1
     fi
   done
@@ -266,17 +273,16 @@ if [ -f /etc/os-release ]; then
     openwrt)
       srcpath="/etc/opkg"
       srcfiles="distfeeds.conf"
-      bkpath=$srcpath
       pkgmgr="opkg update"
-      churl="openwrt"
-
       if [ -d /etc/apk ]; then
         # Detect apk-based OpenWrt 
         srcpath="/etc/apk/repositories.d"
         srcfiles="distfeeds.list"
-        bkpath=$srcpath
         pkgmgr="apk update"
       fi 
+      bkpath=$srcpath
+      churl="openwrt"
+      force=0
       ;;
     ubuntu)
       srcpath="/etc/apt"
