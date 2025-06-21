@@ -18,5 +18,5 @@ jobs:
         run: docker build --no-cache --rm -f ./tests/openwrt_apk/check_already_changed .
       - name: check_source_list_nonexistent
         run: docker build --no-cache --rm -f ./tests/openwrt_apk/check_filenotfound .
-      - name: check_apt_update
-        run: docker build --no-cache --rm -f ./tests/openwrt_apk/check_apt_update .
+      - name: check_apk
+        run: docker build --no-cache --rm -f ./tests/openwrt_apk/check_apk .
