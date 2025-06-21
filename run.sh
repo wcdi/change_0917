@@ -95,7 +95,7 @@ check() {
     fi
   done
   # newsrcfiles is empty, exit with error message
-  if test -z $newsrcfiles ; then
+  if test -z "$newsrcfiles" ; then
     echo "No change files found." >&2
     echo "" >&2
     echo "Hint: the program looked for the following files: $srcfiles" >&2
@@ -243,26 +243,15 @@ if [ -f /etc/os-release ]; then
     debian)
       pkgmgr="apt-get update"
       srcpath="/etc/apt"
+      srcfiles="sources.list"
       bkpath="/etc/apt/backup"
       case "$NAME" in
         "Parrot Security")
-          srcfiles="sources.list.d/parrot.list"
-
-          if ! mysudo test -e "$srcpath/$srcfiles" ; then
-            # before 24.04
-            srcfiles="sources.list"
-            bkpath="/etc/apt"
-          fi
+          srcfiles="$srcfiles sources.list.d/parrot.list"
           churl="parrot"
           ;;
         *)
-          srcfiles="sources.list.d/debian.sources"
-
-          if ! mysudo test -e "$srcpath/$srcfiles" ; then
-            # before 24.04
-            srcfiles="sources.list"
-            bkpath="/etc/apt"
-          fi
+          srcfiles="$srcfiles sources.list.d/debian.sources"
           churl="simple"
           ;;
       esac
