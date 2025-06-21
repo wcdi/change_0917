@@ -1,8 +1,8 @@
 FROM --platform=linux/amd64 archlinux
-
 COPY run.sh /
 
-# 実行
-RUN sh /run.sh -y
+# 全ての処理が正常に成功する。
 
+## 検証
+RUN sh /run.sh -yn
 RUN yes | pacman -Syu
