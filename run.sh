@@ -177,6 +177,18 @@ commit() {
   done
 }
 
+almalinux() {
+  cd $tmppath
+    for srcfile in $srcfiles; do
+      sed -i '/mirrorlist=.*/d' $srcfile
+      sed -i 's-# baseurl=https://vault.almalinux.org-baseurl=http://mirror.hashy0917.net/almalinux-' $srcfile
+      sed -i 's-# baseurl=https://repo.almalinux.org/almalinux-baseurl=http://mirror.hashy0917.net/almalinux-' $srcfile
+      # sed -i 's-mirrorlist=https://mirrors.almalinux.org/mirrorlist-baseurl=http://mirror.hashy0917.net/almalinux-g' $srcfile
+      # sed -i 's-ht.*//[A-Za-z0-9\.]*/almalinux/almalinux-http://mirror.hashy0917.net/almalinux-g' $srcfile
+    done
+  cd - > /dev/null
+}
+
 arch() {
   cd $tmppath
     for srcfile in $srcfiles; do
@@ -206,7 +218,7 @@ parrot() {
 openwrt() {
   cd $tmppath
     for srcfile in $srcfiles; do
-      if grep -E 'ht.*//[A-Za-z0-9.]*/openwrt/' >/dev/null 2>&1 $srcfile ; then
+      if grep -E 'ht.*//[A-Za-z0-9.]*/openwrt/' $srcfile >/dev/null 2>&1 ; then
         sed -i 's-ht.*//[A-Za-z0-9.]*/openwrt/-http://mirror.hashy0917.net/openwrt/-' $srcfile
       else
         sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/openwrt/-' $srcfile
@@ -239,6 +251,13 @@ trap 'rm -rf "$tmppath"' EXIT INT TERM
 if [ -f /etc/os-release ]; then
   . /etc/os-release
   case "$ID" in
+    almalinux)
+      srcpath="/etc/yum.repos.d"
+      srcfiles="almalinux-appstream.repo almalinux-baseos.repo almalinux-crb.repo almalinux-extras.repo almalinux-highavailability.repo almalinux-nfv.repo almalinux-plus.repo almalinux-resilientstorage.repo almalinux-rt.repo almalinux-sap.repo almalinux-saphana.repo"
+      bkpath="$srcpath/backup"
+      pkgmgr='dnf update -y'
+      churl="almalinux"
+    ;;
     arch)
       srcpath="/etc/pacman.d"
       srcfiles="mirrorlist"

@@ -1,0 +1,17 @@
+FROM --platform=linux/amd64 almalinux:latest
+COPY run.sh /
+
+# バックアップがある場合に処理が終了することを確認する
+
+## 準備
+### 擬似バックアップファイルの作成と、エラー文再現をする
+
+# RUN mkdir /etc/yum.repos.d/backup && mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup && 
+RUN mkdir /etc/yum.repos.d/backup &&\
+    for file in $(find /etc/yum.repos.d/ -type f -name "*.repo"); do\
+    cp $file /etc/yum.repos.d/backup/$(basename $file).bk;\
+    done
+
+## 検証
+### エラーメッセージが一致したら成功
+RUN sh /run.sh 2>&1 | grep -E "Backup failed: .* is already."

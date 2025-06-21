@@ -1,0 +1,12 @@
+FROM --platform=linux/amd64 archlinux
+COPY run.sh /
+
+# 変更されていた場合に処理が終了するようにする
+
+## 準備
+RUN sh /run.sh -yn
+RUN rm -rf /etc/yum.repos.d/backup
+
+## 検証
+### エラーメッセージが一致したら成功
+RUN sh /run.sh -yn 2>&1 | grep "Already changed: Detected “mirror.hashy0917.net” domain in"
