@@ -258,16 +258,10 @@ if [ -f /etc/os-release ]; then
       ;;
     kali)
       srcpath="/etc/apt"
-      srcfiles="sources.list.d/kali.sources"
+      srcfiles="sources.list.d/kali.sources sources.list"
       bkpath="/etc/apt/backup"
       pkgmgr="apt-get update"
       churl="simple"
-
-      if ! mysudo test -e "$srcpath/$srcfiles" ; then
-        # before 24.04
-        srcfiles="sources.list"
-        bkpath="/etc/apt"
-      fi
       ;;
     openwrt)
       srcpath="/etc/opkg"
