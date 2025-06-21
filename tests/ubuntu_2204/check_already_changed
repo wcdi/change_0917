@@ -6,7 +6,7 @@ COPY run.sh /
 ## 準備
 ### 擬似バックアップファイルの作成と、エラー文再現をする
 RUN sh /run.sh -yn
-RUN rm /etc/apt/sources.list.bk
+RUN rm /etc/apt/backup/sources.list.bk
 
 ## 検証
 ### エラーメッセージが一致したら成功
