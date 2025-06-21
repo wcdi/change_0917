@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ubuntu:24.04
+FROM --platform=linux/amd64 parrotsec/core
 COPY run.sh /
 
 # 変更されていた場合に処理が終了するようにする
@@ -6,7 +6,7 @@ COPY run.sh /
 ## 準備
 ### 擬似バックアップファイルの作成と、エラー文再現をする
 RUN sh /run.sh -yn
-RUN rm /etc/apt/backup/sources.list.d/ubuntu.sources.bk
+RUN rm /etc/apt/backup/sources.list.d/parrot.list.bk
 
 ## 検証
 ### エラーメッセージが一致したら成功
