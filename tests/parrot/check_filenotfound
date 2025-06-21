@@ -1,0 +1,12 @@
+FROM --platform=linux/amd64 parrotsec/core
+COPY run.sh /
+
+# sources.listがない場合に処理が終了することを確認する
+
+## 準備
+RUN rm /etc/apt/sources.list
+RUN rm /etc/apt/sources.list.d/parrot.list
+
+## 検証
+### エラーメッセージが一致したら成功
+RUN test "$(sh /run.sh -yn 2>&1 | head -n 1)" = "No change files found."
