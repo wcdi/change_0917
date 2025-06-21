@@ -1,7 +1,8 @@
 FROM --platform=linux/amd64 openwrt/rootfs:latest
-
 COPY run.sh /
 
-# 実行
+# 全ての処理が正常に成功する。
 RUN mkdir /var/log
-RUN sh /run.sh -yn
+
+## 検証
+RUN sh /run.sh -y
