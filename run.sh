@@ -200,7 +200,7 @@ arch() {
 simple() {
   cd $tmppath
     for srcfile in $srcfiles; do
-      sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $srcfile
+      sed -i 's-ht.*//[A-Za-z0-9.]*/-https://mirror.hashy0917.net/-' $srcfile
     done
   cd - > /dev/null
 }
@@ -208,9 +208,9 @@ simple() {
 parrot() {
   cd $tmppath
     for srcfile in $srcfiles; do
-      sed -i 's-ht.*//[A-Za-z0-9.]*/-http://mirror.hashy0917.net/-' $srcfile
+      sed -i 's-ht.*//[A-Za-z0-9.]*/-https://mirror.hashy0917.net/-' $srcfile
       # (Preserve paths that include 'direct'.)
-      sed -i 's-http://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $srcfile
+      sed -i 's-https://mirror.hashy0917.net/direct/parrot-https://deb.parrot.sh/direct/parrot-' $srcfile
     done
   cd - > /dev/null
 }
@@ -269,7 +269,9 @@ if [ -f /etc/os-release ]; then
     debian)
       pkgmgr="apt-get update"
       srcpath="/etc/apt"
-      srcfiles="sources.list"
+      # debian-securityがミラーされたら変更
+      # srcfiles="sources.list mirrors/debian.list mirrors/debian-security.list"
+      srcfiles="sources.list mirrors/debian.list"
       bkpath="/etc/apt/backup"
       case "$NAME" in
         "Parrot Security")
